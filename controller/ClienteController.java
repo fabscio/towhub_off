@@ -137,4 +137,24 @@ public class ClienteController {
     // Opcional: Voltar o foco para o nome
     txtNome.requestFocus();
   }
+
+  // Em controller/ClienteController.java
+
+@FXML private ComboBox<Base> cbBase; // Note: Tipo <Base>, não <String>
+
+@FXML
+public void initialize() {
+    BaseDAO dao = new BaseDAO();
+    List<Base> basesDoBanco = dao.listar();
+
+    cbBase.setItems(FXCollections.observableArrayList(basesDoBanco));
+}
+
+@FXML
+public void acaoSalvar() {
+    // ...
+    Base baseSelecionada = cbBase.getValue();
+    int idBase = baseSelecionada.getId(); // Agora temos o ID real do banco!
+    // ...
+}
 }

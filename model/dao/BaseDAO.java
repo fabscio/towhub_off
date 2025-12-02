@@ -26,6 +26,26 @@ public class BaseDAO {
       return false;
     }
   }
+
+  // Em model/dao/BaseDAO.java
+public List<Base> listar() {
+    List<Base> lista = new ArrayList<>();
+    String sql = "SELECT * FROM bases";
+
+    try (Connection conn = ConexaoFactory.getConexao();
+         PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            Base b = new Base();
+            b.setId(rs.getInt("id"));
+            b.setRazaoSocial(rs.getString("razao_social"));
+            // ... outros campos
+            lista.add(b);
+        }
+    } catch (SQLException e) { e.printStackTrace(); }
+    return lista;
+}
   
   // Futuramente você precisará deste método para preencher os ComboBoxes
   // public List<Base> listar() { ... }

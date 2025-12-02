@@ -5,128 +5,67 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane; // IMPORTANTE
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import java.io.IOException;
-import java.net.URL; // IMPORTANTE
+import java.net.URL;
 
 public class MenuController {
 
-    // VINCULA COM O FXML (O BorderPane principal deve ter fx:id="mainLayout")
-    @FXML
-    private BorderPane mainLayout;
+    @FXML private BorderPane layoutPrincipal;
 
-    // --- LÓGICA DE NAVEGAÇÃO ---
-    private void loadScreen(String fxmlPath) {
+    // --- Método Genérico para Trocar de Tela ---
+    private void carregarTela(String caminhoFxml) {
         try {
-            URL fxmlUrl = getClass().getResource(fxmlPath);
-            if (fxmlUrl == null) {
-                System.out.println("ERRO: Arquivo FXML não encontrado: " + fxmlPath);
+            URL url = getClass().getResource(caminhoFxml);
+            if (url == null) {
+                System.out.println("ERRO: Arquivo não encontrado: " + caminhoFxml);
                 return;
             }
-
-            FXMLLoader loader = new FXMLLoader(fxmlUrl);
-            Parent view = loader.load();
-
-            // Troca apenas o CENTRO do BorderPane, mantendo o menu lateral
-            mainLayout.setCenter(view);
-
+            Parent novaTela = FXMLLoader.load(url);
+            layoutPrincipal.setCenter(novaTela); // Troca apenas o miolo
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Erro ao carregar a tela: " + e.getMessage());
+            System.out.println("Erro ao carregar tela: " + e.getMessage());
         }
     }
 
     // --- OPERACIONAL ---
-    @FXML
-    public void showCreateOrder(ActionEvent event) {
-        // Agora isso vai funcionar porque o método loadScreen existe
-        loadScreen("/view/createOrder.fxml");
-    }
-
-    @FXML
-    public void abrirEditarOrdem(ActionEvent event) {
-        loadScreen("/view/editarOrdemServico.fxml");
-    }
+    @FXML public void abrirCriarOrdem(ActionEvent e) { carregarTela("/view/criarOrdemServico.fxml"); }
+    @FXML public void abrirEditarOrdem(ActionEvent e) { carregarTela("/view/editarOrdemServico.fxml"); }
 
     // --- FINANCEIRO ---
-    @FXML
-    public void showPayable(ActionEvent event) {
-        loadScreen("/view/createPayable.fxml");
-    }
-
-    @FXML
-    public void showReceivable(ActionEvent event) {
-        loadScreen("/view/createReceivable.fxml");
-    }
+    @FXML public void abrirContasPagar(ActionEvent e) { carregarTela("/view/contasPagar.fxml"); }
+    @FXML public void abrirContasReceber(ActionEvent e) { carregarTela("/view/contasReceber.fxml"); }
 
     // --- CADASTROS ---
-    @FXML
-    public void showClient(ActionEvent event) {
-        loadScreen("/view/createClient.fxml");
-    }
-
-    @FXML
-    public void showSupplier(ActionEvent event) {
-        loadScreen("/view/createSupplier.fxml");
-    }
-
-    @FXML
-    public void showEmployee(ActionEvent event) {
-        loadScreen("/view/createEmployee.fxml");
-    }
-
-    @FXML
-    public void showService(ActionEvent event) {
-        loadScreen("/view/createService.fxml");
-    }
-
-    @FXML
-    public void showBase(ActionEvent event) {
-        loadScreen("/view/createBase.fxml");
-    }
+    @FXML public void abrirBase(ActionEvent e) { carregarTela("/view/cadastroBase.fxml"); }
+    @FXML public void abrirCliente(ActionEvent e) { carregarTela("/view/cadastroCliente.fxml"); }
+    @FXML public void abrirFornecedor(ActionEvent e) { carregarTela("/view/cadastroFornecedor.fxml"); }
+    @FXML public void abrirFuncionario(ActionEvent e) { carregarTela("/view/cadastroFuncionario.fxml"); }
+    @FXML public void abrirServico(ActionEvent e) { carregarTela("/view/cadastroServico.fxml"); }
 
     // --- RELATÓRIOS ---
-    @FXML
-    public void showServiceOrdersReport(ActionEvent event) {
-        loadScreen("/view/reportServiceOrders.fxml");
-    }
-
-    @FXML
-    public void showReceiptsReport(ActionEvent event) {
-        loadScreen("/view/reportReceipts.fxml");
-    }
-
-    @FXML
-    public void showPaymentsReport(ActionEvent event) {
-        loadScreen("/view/reportPayments.fxml");
-    }
+    @FXML public void abrirRelatorioOS(ActionEvent e) { carregarTela("/view/relatorioOS.fxml"); }
+    @FXML public void abrirRelatorioRecebimentos(ActionEvent e) { carregarTela("/view/relatorioRecebimentos.fxml"); }
+    @FXML public void abrirRelatorioPagamentos(ActionEvent e) { carregarTela("/view/relatorioPagamentos.fxml"); }
 
     // --- SAIR ---
     @FXML
-    public void handleLogout(ActionEvent event) {
+    public void acaoLogout(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/login.fxml"));
-            Parent root = loader.load();
+            // Volta para o Login
+            Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
+            Stage palcoAtual = (Stage) layoutPrincipal.getScene().getWindow();
+            palcoAtual.close();
 
-            // 1. Pega o botão que acionou o evento para descobrir a janela atual
-            Stage currentStage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            currentStage.close();
-
-            // 2. Abre a tela de Login novamente
-            Stage loginStage = new Stage();
-            // Tamanho do login (400x550 conforme o FXML do login)
-            Scene scene = new Scene(root, 400, 550);
-
-            loginStage.setTitle("Tow Hub System - Login");
-            loginStage.setScene(scene);
-            loginStage.setResizable(false);
-            loginStage.show();
-
+            Stage palcoLogin = new Stage();
+            palcoLogin.setScene(new Scene(root));
+            palcoLogin.setTitle("Tow Hub - Login");
+            palcoLogin.setResizable(false);
+            palcoLogin.show();
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("ERRO AO TROCAR PARA A TELA DE LOGIN: " + e.getMessage());
         }
     }
 }
