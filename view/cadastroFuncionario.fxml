@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox spacing="20.0" style="-fx-background-color: #ecf0f1;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.FuncionarioController">
+
+  <padding> <Insets bottom="30" left="30" right="30" top="30" /> </padding>
+
+  <Label text="Cadastro de Funcionário" textFill="#2c3e50">
+    <font> <Font name="System Bold" size="24.0" /> </font>
+  </Label>
+
+  <TitledPane collapsible="false" text="Dados Pessoais e Contratuais">
+    <content>
+      <GridPane hgap="15.0" vgap="15.0">
+        <columnConstraints>
+          <ColumnConstraints halignment="RIGHT" minWidth="120.0" /> <ColumnConstraints hgrow="ALWAYS" />
+          <ColumnConstraints halignment="RIGHT" minWidth="120.0" /> <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+
+        <Label text="CPF:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtCpf" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+        <Label text="Senha (Login):" GridPane.rowIndex="0" GridPane.columnIndex="2"/>
+        <PasswordField fx:id="txtSenha" GridPane.rowIndex="0" GridPane.columnIndex="3"/>
+
+        <Label text="Nome Completo:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtNome" GridPane.rowIndex="1" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+
+        <Label text="Telefone:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtTelefone" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+        <Label text="Endereço:" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+        <TextField fx:id="txtEndereco" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+
+        <Label text="Carga Horária:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtCarga" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+        <Label text="Salário Base (R$):" GridPane.rowIndex="3" GridPane.columnIndex="2"/>
+        <TextField fx:id="txtSalario" GridPane.rowIndex="3" GridPane.columnIndex="3"/>
+
+        <Label text="Base de Lotação:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+        <ComboBox fx:id="cbBase" maxWidth="Infinity" promptText="Selecione..." GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+        <Label text="Função:" GridPane.rowIndex="4" GridPane.columnIndex="2"/>
+        <ComboBox fx:id="cbFuncao" maxWidth="Infinity" promptText="Selecione..." GridPane.rowIndex="4" GridPane.columnIndex="3"/>
+
+        <Label fx:id="lblCnh" text="CNH:" visible="false" managed="false" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+        <TextField fx:id="txtCnh" visible="false" managed="false" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+        <Label fx:id="lblCat" text="Categoria:" visible="false" managed="false" GridPane.rowIndex="5" GridPane.columnIndex="2"/>
+        <ComboBox fx:id="cbCategoria" maxWidth="Infinity" visible="false" managed="false" GridPane.rowIndex="5" GridPane.columnIndex="3"/>
+      </GridPane>
+    </content>
+  </TitledPane>
+
+  <Button text="Salvar Funcionário" onAction="#acaoSalvar"
+          style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+</VBox>

@@ -1,114 +1,71 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="1000.0" prefHeight="550.0" prefWidth="400.0" style="-fx-background-color: #f0f2f5;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
-   <children>
-      <VBox alignment="TOP_CENTER" layoutX="50.0" layoutY="35.0" prefHeight="480.0" prefWidth="300.0" spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="35.0">
-         <children>
-            <VBox alignment="CENTER" spacing="5.0">
-               <children>
-                  <ImageView fitHeight="80.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <!-- Caminho da imagem -->
-                        <Image url="@../img/logo_towHub.png" />
-                     </image>
-                  </ImageView>
-                  <Label text="Acesso ao Sistema" textFill="#7f8c8d">
-                     <font>
-                        <Font size="15.0" />
-                     </font>
-                  </Label>
-               </children>
-               <VBox.margin>
-                  <Insets bottom="20.0" top="10.0" />
-               </VBox.margin>
-            </VBox>
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="1000.0"
+            prefHeight="550.0" prefWidth="400.0" style="-fx-background-color: #f0f2f5;"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controller.LoginController">
 
-                        <VBox alignment="CENTER_LEFT" maxWidth="200.0" prefWidth="657.0" spacing="5.0">
-               <children>
-                  <Label text="CPF do Usuário" textFill="#34495e">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="txtCpf" promptText="000.000.000-00" style="-fx-background-radius: 5; -fx-padding: 10;">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </TextField>
-                  <Label fx:id="lblNomeUsuario" text="Aguardando identificação..." textFill="#2980b9" wrapText="true">
-                     <font>
-                        <Font name="System Italic" size="12.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="2.0" />
-                     </VBox.margin>
-                  </Label>
-               </children>
-            </VBox>
+  <children>
+    <VBox alignment="TOP_CENTER" layoutX="50.0" layoutY="35.0" prefHeight="480.0" prefWidth="300.0"
+          spacing="15.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);"
+          AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="35.0">
 
-                        <VBox alignment="CENTER_LEFT" maxWidth="200.0" spacing="5.0">
-               <children>
-                  <Label text="Senha" textFill="#34495e">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Label>
-                  <PasswordField fx:id="txtSenha" promptText="••••••••" style="-fx-background-radius: 5; -fx-padding: 10;">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </PasswordField>
-               </children>
-               <VBox.margin>
-                  <Insets top="5.0" />
-               </VBox.margin>
-            </VBox>
-
-                        <!--
-               CORREÇÃO DEFINITIVA:
-                           Removi o atributo cursor="HAND" (que dava erro).
-                           Mantive apenas o CSS: -fx-cursor: hand; (que funciona 100%).
-                        -->
-            <Button fx:id="btnEntrar" defaultButton="true" maxWidth="150.0" mnemonicParsing="false" onAction="#handleEntrar" style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 5; -fx-cursor: hand;" text="ENTRAR">
-               <font>
-                  <Font name="System Bold" size="14.0" />
-               </font>
-               <padding>
-                  <Insets bottom="12.0" top="12.0" />
-               </padding>
-               <VBox.margin>
-                  <Insets top="20.0" />
-               </VBox.margin>
-            </Button>
-
-                        <!--
-               CORREÇÃO DEFINITIVA:
-                           Removi o atributo cursor="HAND".
-                           Adicionei style="-fx-cursor: hand;" para dar o efeito de mãozinha.
-                        -->
-            <Label style="-fx-cursor: hand;" text="Esqueceu a senha?" textFill="#95a5a6" underline="true">
-               <font>
-                  <Font size="12.0" />
-               </font>
-               <VBox.margin>
-                  <Insets top="10.0" />
-               </VBox.margin>
+      <children>
+        <VBox alignment="CENTER" spacing="5.0">
+          <children>
+            <Label text="TOW HUB" textFill="#2c3e50">
+              <font> <Font name="System Bold" size="28.0" /> </font>
             </Label>
-         </children>
-         <padding>
-            <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
-         </padding>
-      </VBox>
-   </children>
+            <Label text="Acesso ao Sistema" textFill="#7f8c8d">
+              <font> <Font size="15.0" /> </font>
+            </Label>
+          </children>
+          <VBox.margin> <Insets bottom="20.0" top="10.0" /> </VBox.margin>
+        </VBox>
+
+        <VBox alignment="CENTER_LEFT" maxWidth="200.0" prefWidth="657.0" spacing="5.0">
+          <children>
+            <Label text="CPF do Usuário" textFill="#34495e">
+              <font> <Font name="System Bold" size="12.0" /> </font>
+            </Label>
+            <TextField fx:id="txtCpf" promptText="000.000.000-00" style="-fx-background-radius: 5; -fx-padding: 10;">
+              <font> <Font size="14.0" /> </font>
+            </TextField>
+            <Label fx:id="lblMensagem" text="Aguardando identificação..." textFill="#2980b9" wrapText="true">
+              <font> <Font name="System Italic" size="12.0" /> </font>
+            </Label>
+          </children>
+        </VBox>
+
+        <VBox alignment="CENTER_LEFT" maxWidth="200.0" spacing="5.0">
+          <children>
+            <Label text="Senha" textFill="#34495e">
+              <font> <Font name="System Bold" size="12.0" /> </font>
+            </Label>
+            <PasswordField fx:id="txtSenha" promptText="••••••••" style="-fx-background-radius: 5; -fx-padding: 10;">
+              <font> <Font size="14.0" /> </font>
+            </PasswordField>
+          </children>
+          <VBox.margin> <Insets top="5.0" /> </VBox.margin>
+        </VBox>
+
+        <Button fx:id="btnEntrar" defaultButton="true" maxWidth="150.0" mnemonicParsing="false"
+                onAction="#acaoEntrar"
+                style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 5; -fx-cursor: hand;"
+                text="ENTRAR">
+          <font> <Font name="System Bold" size="14.0" /> </font>
+          <padding> <Insets bottom="12.0" top="12.0" /> </padding>
+          <VBox.margin> <Insets top="20.0" /> </VBox.margin>
+        </Button>
+
+      </children>
+      <padding> <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" /> </padding>
+    </VBox>
+  </children>
 </AnchorPane>

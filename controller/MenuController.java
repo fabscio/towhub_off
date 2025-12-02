@@ -46,8 +46,8 @@ public class MenuController {
     }
 
     @FXML
-    public void showEditOrder(ActionEvent event) {
-        System.out.println("Editar Ordem de Serviço clicado");
+    public void abrirEditarOrdem(ActionEvent event) {
+        loadScreen("/view/editarOrdemServico.fxml");
     }
 
     // --- FINANCEIRO ---

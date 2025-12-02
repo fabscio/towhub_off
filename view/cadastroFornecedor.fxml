@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox spacing="20.0" style="-fx-background-color: #ecf0f1;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.FornecedorController">
+
+  <padding> <Insets bottom="30" left="30" right="30" top="30" /> </padding>
+
+  <Label text="Cadastro de Fornecedor" textFill="#2c3e50">
+    <font> <Font name="System Bold" size="24.0" /> </font>
+  </Label>
+
+  <TitledPane collapsible="false" text="Dados do Fornecedor">
+    <content>
+      <VBox spacing="15.0">
+        <HBox spacing="20.0">
+          <RadioButton fx:id="rbPF" selected="true" text="Pessoa Física (PF)">
+            <toggleGroup> <ToggleGroup fx:id="grupoTipoFornecedor" /> </toggleGroup>
+          </RadioButton>
+          <RadioButton fx:id="rbPJ" text="Pessoa Jurídica (PJ)" toggleGroup="$grupoTipoFornecedor" />
+        </HBox>
+
+        <GridPane hgap="15.0" vgap="15.0">
+          <columnConstraints>
+             <ColumnConstraints halignment="RIGHT" minWidth="120.0" /> <ColumnConstraints hgrow="ALWAYS" />
+             <ColumnConstraints halignment="RIGHT" minWidth="120.0" /> <ColumnConstraints hgrow="ALWAYS" />
+          </columnConstraints>
+
+          <Label text="Razão Social / Nome:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+          <TextField fx:id="txtNome" GridPane.rowIndex="0" GridPane.columnIndex="1" GridPane.columnSpan="3"/>
+
+          <Label text="Nicho / Ramo:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+          <TextField fx:id="txtNicho" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+          <Label text="Telefone:" GridPane.rowIndex="1" GridPane.columnIndex="2"/>
+          <TextField fx:id="txtTelefone" GridPane.rowIndex="1" GridPane.columnIndex="3"/>
+
+          <Label text="Email:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+          <TextField fx:id="txtEmail" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+          <Label text="Endereço:" GridPane.rowIndex="2" GridPane.columnIndex="2"/>
+          <TextField fx:id="txtEndereco" GridPane.rowIndex="2" GridPane.columnIndex="3"/>
+
+          <Label fx:id="lblCpf" text="CPF:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+          <TextField fx:id="txtCpf" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+          <Label fx:id="lblCnpj" text="CNPJ:" visible="false" managed="false" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+          <TextField fx:id="txtCnpj" visible="false" managed="false" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+        </GridPane>
+      </VBox>
+    </content>
+  </TitledPane>
+
+  <Button text="Salvar Fornecedor" onAction="#acaoSalvar"
+          style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"/>
+</VBox>

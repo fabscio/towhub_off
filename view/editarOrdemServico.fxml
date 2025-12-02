@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox spacing="15.0" style="-fx-background-color: #ecf0f1;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="controller.EditarOrdemServicoController">
+
+  <padding> <Insets bottom="20" left="20" right="20" top="20" /> </padding>
+
+  <HBox alignment="CENTER_LEFT" spacing="20.0">
+    <Label text="Editar Ordem de Serviço" textFill="#2c3e50">
+      <font> <Font name="System Bold" size="24.0" /> </font>
+    </Label>
+    <Region HBox.hgrow="ALWAYS" />
+    <Label text="Buscar ID:" />
+    <TextField fx:id="txtPesquisaId" prefWidth="100.0" promptText="Ex: 10" />
+    <Button text="Pesquisar" onAction="#acaoPesquisar" style="-fx-background-color: #34495e; -fx-text-fill: white;" />
+  </HBox>
+
+  <TitledPane collapsible="false" text="Dados da Operação">
+    <content>
+      <GridPane hgap="10.0" vgap="10.0">
+        <columnConstraints>
+          <ColumnConstraints halignment="RIGHT" minWidth="120.0" /> <ColumnConstraints hgrow="ALWAYS" />
+          <ColumnConstraints minWidth="30.0" />
+          <ColumnConstraints halignment="RIGHT" minWidth="120.0" /> <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+
+        <children>
+          <Label text="ID da O.S.:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+          <TextField fx:id="txtId" disable="true" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+          <Label text="Data:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+          <DatePicker fx:id="dtData" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+          <Label text="Veículo:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+          <TextField fx:id="txtVeiculo" GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+          <Label text="Placa:" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+          <TextField fx:id="txtPlaca" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+           <Label text="Contato:" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+          <TextField fx:id="txtContato" GridPane.rowIndex="4" GridPane.columnIndex="1" />
+
+          <Label text="Cliente:" GridPane.rowIndex="0" GridPane.columnIndex="3" />
+          <ComboBox fx:id="cbCliente" maxWidth="Infinity" GridPane.rowIndex="0" GridPane.columnIndex="4" />
+
+          <Label text="Base:" GridPane.rowIndex="1" GridPane.columnIndex="3" />
+          <ComboBox fx:id="cbBase" maxWidth="Infinity" GridPane.rowIndex="1" GridPane.columnIndex="4" />
+        </children>
+      </GridPane>
+    </content>
+  </TitledPane>
+
+  <TitledPane collapsible="false" text="Serviços e Valores" VBox.vgrow="ALWAYS">
+    <content>
+      <HBox spacing="15.0">
+        <TableView fx:id="tabelaServicos" HBox.hgrow="ALWAYS">
+          <columns>
+            <TableColumn fx:id="colServico" prefWidth="250.0" text="Serviço" />
+            <TableColumn fx:id="colQtd" prefWidth="80.0" text="Qtd" />
+            <TableColumn fx:id="colValor" prefWidth="100.0" text="Valor Unit." />
+            <TableColumn fx:id="colSubtotal" prefWidth="100.0" text="Subtotal" />
+          </columns>
+          <columnResizePolicy> <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" /> </columnResizePolicy>
+        </TableView>
+
+        <VBox spacing="10.0" minWidth="150.0">
+          <Button text="Adicionar (+)" onAction="#acaoAdicionarServico" maxWidth="Infinity" style="-fx-background-color: #2ecc71; -fx-text-fill: white;" />
+          <Button text="Remover (-)" onAction="#acaoRemoverServico" maxWidth="Infinity" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+
+          <Separator />
+          <Label text="TOTAL:" />
+          <Label fx:id="lblValorTotal" text="R$ 0,00" textFill="#2980b9">
+             <font> <Font name="System Bold" size="20.0" /> </font>
+          </Label>
+          <Separator />
+
+          <Button text="SALVAR ALTERAÇÕES" onAction="#acaoSalvarAlteracoes" maxWidth="Infinity" prefHeight="40"
+                  style="-fx-background-color: #e67e22; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" />
+        </VBox>
+      </HBox>
+    </content>
+  </TitledPane>
+</VBox>
