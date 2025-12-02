@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:id="mainLayout" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MenuController">
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="200.0" style="-fx-background-color: #2c3e50;" BorderPane.alignment="CENTER">
+         <children>
+            <Label text="SISTEMA DE GESTÃO - TOW HUB" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin>
+            </Label>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="Usuário: Admin" textFill="#bdc3c7">
+               <HBox.margin>
+                  <Insets right="20.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+   </top>
+
+   <left>
+      <Accordion prefWidth="250.0" BorderPane.alignment="CENTER">
+        <panes>
+          <TitledPane animated="true" text="OPERACIONAL">
+            <content>
+              <VBox spacing="10.0">
+                 <children>
+                    <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showCreateOrder" text="Criar Ordem de Serviço" />
+                    <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showEditOrder" text="Editar Ordem de Serviço" />
+                 </children>
+                 <padding> <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /> </padding>
+              </VBox>
+            </content>
+          </TitledPane>
+
+          <TitledPane animated="true" text="FINANCEIRO">
+            <content>
+              <VBox spacing="10.0">
+                 <children>
+                    <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showPayable" text="Contas a Pagar" />
+                    <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showReceivable" text="Contas a Receber" />
+                 </children>
+                 <padding> <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /> </padding>
+              </VBox>
+            </content>
+          </TitledPane>
+
+          <TitledPane animated="true" text="CADASTROS">
+            <content>
+              <VBox spacing="10.0">
+                 <children>
+                    <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showBase" text="Base / Filial" />
+
+                    <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showClient" text="Cliente" />
+                    <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showSupplier" text="Fornecedor" />
+                    <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showEmployee" text="Funcionário" />
+                    <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showService" text="Serviço" />
+                 </children>
+                 <padding> <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /> </padding>
+              </VBox>
+            </content>
+          </TitledPane>
+
+          <TitledPane animated="true" text="RELATÓRIOS">
+             <content>
+                <VBox spacing="10.0">
+                   <children>
+                      <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showServiceOrdersReport" text="Ordens de Serviço" />
+                      <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showReceiptsReport" text="Recebimentos" />
+                      <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#showPaymentsReport" text="Pagamentos" />
+                   </children>
+                   <padding> <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /> </padding>
+                </VBox>
+             </content>
+          </TitledPane>
+        </panes>
+      </Accordion>
+   </left>
+
+   <center>
+      <VBox fx:id="centerContent" alignment="CENTER" spacing="20">
+         <children>
+            <Label style="-fx-font-size: 20px; -fx-text-fill: #7f8c8d;" text="Bem vindo ao Tow Hub" />
+         </children>
+      </VBox>
+   </center>
+
+   <bottom>
+      <HBox alignment="CENTER_LEFT" prefHeight="25.0" style="-fx-border-color: #bdc3c7; -fx-border-width: 1 0 0 0;" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#handleLogout" style="-fx-background-color: transparent;" text="Sair / Logout" textFill="#c0392b">
+               <font> <Font size="10.0" /> </font>
+            </Button>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="Status: Conectado">
+               <HBox.margin> <Insets right="10.0" /> </HBox.margin>
+               <font> <Font size="11.0" /> </font>
+            </Label>
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>

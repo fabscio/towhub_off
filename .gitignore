@@ -1,0 +1,12 @@
+# Ignorar arquivos compilados do Java
+*.class
+
+# Ignorar arquivos de log
+*.log
+
+# Ignorar arquivos de sistema
+.DS_Store
+
+# Ignorar bibliotecas externas (Opcional, mas recomendado se forem grandes)
+# Se quiser subir o driver do postgres, coloque um # na frente da linha abaixo
+lib/*.jar

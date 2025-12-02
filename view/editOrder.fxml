@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="15.0" style="-fx-background-color: #ecf0f1;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CreateOrderController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <TitledPane animated="false" collapsible="false" text="Dados da Ordem de Serviço">
+        <content>
+            <GridPane hgap="10.0" vgap="10.0">
+                <columnConstraints>
+                    <ColumnConstraints halignment="RIGHT" minWidth="120.0" />
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
+                    <ColumnConstraints minWidth="30.0" />
+                    <ColumnConstraints halignment="RIGHT" minWidth="120.0" />
+                    <ColumnConstraints hgrow="ALWAYS" minWidth="200.0" />
+                </columnConstraints>
+
+                <children>
+                    <Label text="ID da O.S.:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+               <ComboBox fx:id="cbMotorista1" maxWidth="Infinity" prefHeight="24.0" prefWidth="123.0" promptText="Selecione..." GridPane.columnIndex="1" />
+
+                    <Label text="Motorista:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                    <ComboBox fx:id="cbMotorista" maxWidth="Infinity" promptText="Selecione..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                    <Label text="Analista:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                    <ComboBox fx:id="cbAnalista" maxWidth="Infinity" promptText="Selecione..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+                    <Label text="Pagamento:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                    <ComboBox fx:id="cbPagamento" maxWidth="Infinity" promptText="Selecione..." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                    <Label text="Veículo:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                    <TextField fx:id="txtVeiculo" promptText="Ex: Fiat Uno" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                    <Label text="Placa:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
+                    <TextField fx:id="txtPlaca" promptText="ABC-1234" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+                    <Label text="Contato:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                    <TextField fx:id="txtContato" promptText="(XX) 99999-9999" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+                    <Label text="Disponibilidade" GridPane.columnIndex="3" GridPane.rowIndex="0" />
+                    <ComboBox fx:id="cbSolicitacao" maxWidth="Infinity" GridPane.columnIndex="4" GridPane.rowIndex="0" />
+
+                    <Label text="Data:" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                    <DatePicker fx:id="dtData" maxWidth="Infinity" GridPane.columnIndex="4" GridPane.rowIndex="1" />
+
+                    <Label text="Base:" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                    <ComboBox fx:id="cbBase" maxWidth="Infinity" promptText="Selecione..." GridPane.columnIndex="4" GridPane.rowIndex="2" />
+
+                    <Label text="Cliente:" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                    <ComboBox fx:id="cbCliente" maxWidth="Infinity" promptText="Selecione..." GridPane.columnIndex="4" GridPane.rowIndex="3" />
+
+                    <Label text="Origem:" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                    <TextField fx:id="txtOrigem" promptText="Endereço de retirada" GridPane.columnIndex="4" GridPane.rowIndex="4" />
+
+                    <Label text="Destino:" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                    <TextField fx:id="txtDestino" promptText="Endereço de entrega" GridPane.columnIndex="4" GridPane.rowIndex="5" />
+
+                    <Label text="Prazo (minutos):" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                    <TextField fx:id="txtPrazo" promptText="0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
+                </children>
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
+            </GridPane>
+        </content>
+    </TitledPane>
+   <TitledPane collapsible="false" maxHeight="100.0" text="Observações">
+     <content>
+       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+            <children>
+               <TextArea prefHeight="75.0" prefWidth="939.0" wrapText="true" />
+            </children>
+         </AnchorPane>
+     </content>
+   </TitledPane>
+
+    <TitledPane animated="false" collapsible="false" maxHeight="300.0" text="Serviços e Valores" VBox.vgrow="ALWAYS">
+        <content>
+            <HBox spacing="15.0">
+                <children>
+                    <TableView fx:id="tabelaServicos" HBox.hgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colServico" prefWidth="300.0" text="Serviço Prestado" />
+                            <TableColumn fx:id="colQtd" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Qtd" />
+                            <TableColumn fx:id="colValor" prefWidth="150.0" style="-fx-alignment: CENTER-RIGHT;" text="Valor Unit." />
+                            <TableColumn fx:id="colSubtotal" prefWidth="150.0" style="-fx-alignment: CENTER-RIGHT;" text="Subtotal" />
+                        </columns>
+                        <columnResizePolicy>
+                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                        </columnResizePolicy>
+                    </TableView>
+
+                    <VBox alignment="TOP_CENTER" minWidth="160.0" spacing="10.0">
+                        <children>
+                            <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleAdicionarServico" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-cursor: hand;" text="Adicionar (+)">
+                                <font> <Font name="System Bold" size="12.0" /> </font>
+                            </Button>
+
+                            <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleRemoverServico" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-cursor: hand;" text="Remover (-)" />
+
+                            <Separator prefWidth="200.0">
+                                <VBox.margin>
+                                    <Insets top="10.0" />
+                                </VBox.margin>
+                            </Separator>
+
+                            <Label text="VALOR TOTAL">
+                                <font> <Font size="10.0" /> </font>
+                            </Label>
+                            <Label fx:id="lblValorTotal" text="R$ 0,00" textFill="#2c3e50">
+                                <font> <Font name="System Bold" size="22.0" /> </font>
+                            </Label>
+
+                            <Separator prefWidth="200.0">
+                                <VBox.margin>
+                                    <Insets bottom="10.0" />
+                                </VBox.margin>
+                            </Separator>
+
+                            <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleConcluir" prefHeight="45.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-cursor: hand;" text="SALVAR OS">
+                                <font> <Font name="System Bold" size="14.0" /> </font>
+                            </Button>
+                        </children>
+                    </VBox>
+                </children>
+            </HBox>
+        </content>
+    </TitledPane>
+</VBox>
