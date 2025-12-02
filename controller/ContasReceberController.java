@@ -10,74 +10,62 @@ import model.dao.ContasReceberDAO;
 import java.time.LocalDate;
 
 public class ContasReceberController {
-
-  @FXML private ComboBox<String> cbCliente, cbStatus;
   @FXML private DatePicker dtEmissao, dtVencimento;
   @FXML private Label lblTotalLote;
-  @FXML private ComboBox<ModeloOSSimples> cbOsDisponiveis;
-  
-  @FXML private TableView<ModeloOSSimples> tabelaOs;
-  @FXML private TableColumn<ModeloOSSimples, String> colIdOs;
-  @FXML private TableColumn<ModeloOSSimples, Double> colValorOs;
+  @FXML private ComboBox<String> cbOsDisponiveis; // Na pratica use objetos OS
+  @FXML private TableView<MockOS> tabelaOs;
+  @FXML private TableColumn<MockOS, Integer> colIdOs;
+  @FXML private TableColumn<MockOS, Double> colValorOs;
 
-  private ObservableList<ModeloOSSimples> listaOsSelecionadas = FXCollections.observableArrayList();
+  private ObservableList<MockOS> selecionadas = FXCollections.observableArrayList();
 
   @FXML
   public void initialize() {
-    cbCliente.setItems(FXCollections.observableArrayList("Seguradora Alpha", "Transportadora Beta"));
-    cbStatus.setItems(FXCollections.observableArrayList("PENDENTE", "PAGO"));
-    
-    // Simula OSs vindas do banco (OSs que ainda não tem id_lote)
-    ObservableList<ModeloOSSimples> pendentes = FXCollections.observableArrayList(
-      new ModeloOSSimples(101, 150.00),
-      new ModeloOSSimples(102, 300.00)
-    );
-    cbOsDisponiveis.setItems(pendentes);
+    dtEmissao.setValue(LocalDate.now());
+    cbOsDisponiveis.setItems(FXCollections.observableArrayList("OS 100 - R$ 500", "OS 101 - R$ 200"));
 
     colIdOs.setCellValueFactory(new PropertyValueFactory<>("id"));
     colValorOs.setCellValueFactory(new PropertyValueFactory<>("valor"));
-    tabelaOs.setItems(listaOsSelecionadas);
+    tabelaOs.setItems(selecionadas);
   }
 
   @FXML
   public void acaoAdicionarOs() {
-    ModeloOSSimples os = cbOsDisponiveis.getValue();
-    if (os != null && !listaOsSelecionadas.contains(os)) {
-      listaOsSelecionadas.add(os);
-      atualizarTotal();
-    }
-  }
-  
-  @FXML public void acaoRemoverOs() { /* Lógica similar ao adicionar */ }
-
-  private void atualizarTotal() {
-    double total = listaOsSelecionadas.stream().mapToDouble(ModeloOSSimples::getValor).sum();
+    // Mock simplificado. Na real, pegue o objeto do combo
+    selecionadas.add(new MockOS(100, 500.00));
+    double total = selecionadas.stream().mapToDouble(MockOS::getValor).sum();
     lblTotalLote.setText(String.format("R$ %.2f", total));
   }
 
   @FXML
   public void acaoSalvar() {
-    double total = listaOsSelecionadas.stream().mapToDouble(ModeloOSSimples::getValor).sum();
-    
-    LoteCobranca lote = new LoteCobranca(1, dtEmissao.getValue(), dtVencimento.getValue(), 
-                                         cbStatus.getValue(), total);
-    
-    for (ModeloOSSimples os : listaOsSelecionadas) {
-      lote.getIdsOrdensServico().add(os.getId());
+    double total = selecionadas.stream().mapToDouble(MockOS::getValor).sum();
+    LoteCobranca lote = new LoteCobranca(1, dtEmissao.getValue(), dtVencimento.getValue(), "PENDENTE", total);
+    for(MockOS m : selecionadas) lote.getIdsOs().add(m.getId());
+
+    if(new ContasReceberDAO().salvar(lote)) {
+      System.out.println("Lote Gerado!");
+      selecionadas.clear();
+    }
+  }
+
+  @FXML
+    public void acaoRemoverOs() {
+        // Se você usou uma classe Mock ou Objeto real, ajuste o tipo aqui
+        Object itemSelecionado = tabelaOs.getSelectionModel().getSelectedItem();
+
+        if (itemSelecionado != null) {
+            tabelaOs.getItems().remove(itemSelecionado);
+            // atualizarTotal(); // Se tiver cálculo de total
+        }
     }
 
-    if (new ContasReceberDAO().salvar(lote)) {
-      System.out.println("Fatura Gerada com Sucesso!");
-      listaOsSelecionadas.clear();
-    }
+  public static class MockOS {
+      int id; double valor;
+      public MockOS(int id, double valor) { this.id=id; this.valor=valor; }
+      public int getId() { return id; }
+      public double getValor() { return valor; }
   }
-  
-  // Classe auxiliar interna apenas para preencher a tabela
-  public static class ModeloOSSimples {
-    private int id; private double valor;
-    public ModeloOSSimples(int id, double valor) { this.id = id; this.valor = valor; }
-    public int getId() { return id; }
-    public double getValor() { return valor; }
-    public String toString() { return "OS #" + id + " - R$ " + valor; }
-  }
+
+
 }

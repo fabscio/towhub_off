@@ -3,13 +3,15 @@ package controller;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import model.Base;
 import model.Cliente;
+import model.dao.BaseDAO;
 import model.dao.ClienteDAO;
+import java.util.List;
 
 public class ClienteController {
 
   // --- Elementos da Interface Gráfica ---
-
   @FXML private RadioButton rbPF;
   @FXML private RadioButton rbPJ;
   @FXML private ToggleGroup grupoTipoCliente;
@@ -19,9 +21,8 @@ public class ClienteController {
   @FXML private TextField txtEmail;
   @FXML private TextField txtEndereco;
 
-  @FXML private ComboBox<String> cbBase;
+  @FXML private ComboBox<Base> cbBase; // Agora usa o objeto Base corretamente
 
-  // Campos que mudam conforme o tipo (PF ou PJ)
   @FXML private TextField txtCpf;
   @FXML private TextField txtCnpj;
   @FXML private TextField txtGestor;
@@ -30,44 +31,33 @@ public class ClienteController {
   @FXML private Label lblCnpj;
   @FXML private Label lblGestor;
 
-  /**
-   * Método executado automaticamente ao abrir a tela.
-   */
   @FXML
   public void initialize() {
-    carregarBases();
+    carregarBasesDoBanco();
     configurarMudancaDeTipo();
-
-    // Inicia a tela no modo Pessoa Física
     atualizarVisibilidade(false);
   }
 
-  private void carregarBases() {
-    // Futuramente, isso virá do banco de dados (BaseDAO)
-    cbBase.setItems(FXCollections.observableArrayList("Matriz", "Filial Norte"));
+  private void carregarBasesDoBanco() {
+    BaseDAO dao = new BaseDAO();
+    List<Base> listaBases = dao.listar();
+    cbBase.setItems(FXCollections.observableArrayList(listaBases));
   }
 
   private void configurarMudancaDeTipo() {
     grupoTipoCliente.selectedToggleProperty().addListener((obs, antigo, novo) -> {
-      // Se o botão PJ estiver selecionado, passa true
       atualizarVisibilidade(rbPJ.isSelected());
     });
   }
 
-  /**
-   * Controla quais campos aparecem na tela (PF ou PJ).
-   */
   private void atualizarVisibilidade(boolean ehPessoaJuridica) {
-
-    // Configuração para Pessoa Física (CPF)
     boolean ehFisica = !ehPessoaJuridica;
 
     lblCpf.setVisible(ehFisica);
     txtCpf.setVisible(ehFisica);
-    lblCpf.setManaged(ehFisica); // setManaged define se o campo ocupa espaço na tela
+    lblCpf.setManaged(ehFisica);
     txtCpf.setManaged(ehFisica);
 
-    // Configuração para Pessoa Jurídica (CNPJ e Gestor)
     lblCnpj.setVisible(ehPessoaJuridica);
     txtCnpj.setVisible(ehPessoaJuridica);
     lblCnpj.setManaged(ehPessoaJuridica);
@@ -79,28 +69,20 @@ public class ClienteController {
     txtGestor.setManaged(ehPessoaJuridica);
   }
 
-  /**
-   * Ação do botão "Salvar Cliente".
-   */
   @FXML
   public void acaoSalvar() {
-
-    // 1. Coleta os dados básicos
     String nome = txtNome.getText();
     String telefone = txtTelefone.getText();
     String email = txtEmail.getText();
     String endereco = txtEndereco.getText();
 
-    // 2. Validação básica
-    if (cbBase.getValue() == null) {
+    Base baseSelecionada = cbBase.getValue();
+    if (baseSelecionada == null) {
       System.out.println("Aviso: Selecione uma base de atendimento!");
       return;
     }
+    int idBase = baseSelecionada.getId();
 
-    // Simulação: Converte o nome da base para ID (1 ou 2)
-    int idBase = cbBase.getValue().equals("Matriz") ? 1 : 2;
-
-    // 3. Define dados específicos (PF/PJ)
     String tipo;
     String documento;
 
@@ -112,10 +94,7 @@ public class ClienteController {
       documento = txtCnpj.getText();
     }
 
-    // 4. Cria o objeto Modelo
     Cliente cliente = new Cliente(tipo, nome, documento, telefone, email, endereco, idBase);
-
-    // 5. Chama o DAO para persistir no banco
     ClienteDAO dao = new ClienteDAO();
 
     if (dao.salvar(cliente)) {
@@ -127,34 +106,10 @@ public class ClienteController {
   }
 
   private void limparCampos() {
-    txtNome.clear();
-    txtTelefone.clear();
-    txtEmail.clear();
-    txtEndereco.clear();
-    txtCpf.clear();
-    txtCnpj.clear();
+    txtNome.clear(); txtTelefone.clear(); txtEmail.clear();
+    txtEndereco.clear(); txtCpf.clear(); txtCnpj.clear();
     txtGestor.clear();
-    // Opcional: Voltar o foco para o nome
+    cbBase.getSelectionModel().clearSelection();
     txtNome.requestFocus();
   }
-
-  // Em controller/ClienteController.java
-
-@FXML private ComboBox<Base> cbBase; // Note: Tipo <Base>, não <String>
-
-@FXML
-public void initialize() {
-    BaseDAO dao = new BaseDAO();
-    List<Base> basesDoBanco = dao.listar();
-
-    cbBase.setItems(FXCollections.observableArrayList(basesDoBanco));
-}
-
-@FXML
-public void acaoSalvar() {
-    // ...
-    Base baseSelecionada = cbBase.getValue();
-    int idBase = baseSelecionada.getId(); // Agora temos o ID real do banco!
-    // ...
-}
 }

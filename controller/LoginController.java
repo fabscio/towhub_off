@@ -7,37 +7,34 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
-import model.dao.FuncionarioDAO; // Importar o DAO
+import model.dao.FuncionarioDAO;
 import java.io.IOException;
 
 public class LoginController {
 
     @FXML private TextField txtCpf;
-    @FXML private PasswordField txtSenha; // Certifique-se que no FXML é PasswordField
-    @FXML private Label lblNomeUsuario;
+    @FXML private PasswordField txtSenha;
     @FXML private Button btnEntrar;
+    @FXML private Label lblMensagem;
 
     @FXML
-    public void handleEntrar(ActionEvent event) {
+    public void acaoEntrar(ActionEvent event) {
         String cpf = txtCpf.getText();
         String senha = txtSenha.getText();
 
-        if (cpf.isEmpty() || senha.isEmpty()) {
-            lblNomeUsuario.setText("Preencha CPF e Senha!");
-            lblNomeUsuario.setStyle("-fx-text-fill: #c0392b;"); // Vermelho
-            return;
-        }
-
-        // --- LÓGICA REAL DE BANCO DE DADOS ---
         FuncionarioDAO dao = new FuncionarioDAO();
 
+        // Se o banco não estiver acessível, o DAO trata ou retorna false
         if (dao.autenticar(cpf, senha)) {
-            // LOGIN SUCESSO
             abrirMenu();
         } else {
-            // LOGIN FALHA
-            lblNomeUsuario.setText("CPF ou Senha incorretos.");
-            lblNomeUsuario.setStyle("-fx-text-fill: #c0392b;");
+            // Se lblMensagem for nulo (não estiver no FXML), evitamos o erro
+            if (lblMensagem != null) {
+                lblMensagem.setText("Acesso negado. Verifique CPF/Senha.");
+                lblMensagem.setStyle("-fx-text-fill: #c0392b;");
+            } else {
+                System.out.println("Acesso negado. (Label de mensagem não encontrado na tela)");
+            }
         }
     }
 
@@ -46,22 +43,21 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/menu.fxml"));
             Parent root = loader.load();
 
-            // Fechar Login
-            Stage loginStage = (Stage) btnEntrar.getScene().getWindow();
-            loginStage.close();
+            // Pega a janela atual através do botão
+            Stage palcoAtual = (Stage) btnEntrar.getScene().getWindow();
+            palcoAtual.close();
 
-            // Abrir Menu em HD
-            Stage menuStage = new Stage();
-            Scene scene = new Scene(root, 1280, 720); // Resolução HD
-
-            menuStage.setTitle("Sistema de Gestão - Tow Hub");
-            menuStage.setScene(scene);
-            menuStage.show();
-            menuStage.centerOnScreen();
+            // Abre o Menu
+            Stage palcoMenu = new Stage();
+            palcoMenu.setScene(new Scene(root, 1280, 720));
+            palcoMenu.setTitle("Sistema Tow Hub");
+            palcoMenu.setResizable(false);
+            palcoMenu.show();
+            palcoMenu.centerOnScreen();
 
         } catch (IOException e) {
             e.printStackTrace();
-            lblNomeUsuario.setText("Erro ao carregar menu: " + e.getMessage());
+            System.out.println("Erro ao carregar o menu: " + e.getMessage());
         }
     }
 }

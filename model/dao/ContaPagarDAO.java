@@ -6,49 +6,39 @@ import model.ParcelaPagar;
 import java.sql.*;
 
 public class ContaPagarDAO {
-
   public boolean salvar(ContaPagar conta) {
     Connection conn = null;
-    PreparedStatement stmtConta = null;
-    PreparedStatement stmtParcela = null;
-
-    String sqlConta = "INSERT INTO contas_pagar (id_fornecedor, id_base, data_compra, valor_total) VALUES (?, ?, ?, ?) RETURNING id";
-    String sqlParcela = "INSERT INTO parcelas_pagar (id_conta, numero_parcela, data_vencimento, valor) VALUES (?, ?, ?, ?)";
+    String sqlC = "INSERT INTO contas_pagar (id_fornecedor, id_base, data_compra, valor_total) VALUES (?, ?, ?, ?) RETURNING id";
+    String sqlP = "INSERT INTO parcelas_pagar (id_conta, numero_parcela, data_vencimento, valor) VALUES (?, ?, ?, ?)";
 
     try {
       conn = ConexaoFactory.getConexao();
-      conn.setAutoCommit(false); // Inicia Transação
+      conn.setAutoCommit(false);
 
-      // 1. Salva a Conta
-      stmtConta = conn.prepareStatement(sqlConta);
-      stmtConta.setInt(1, conta.getIdFornecedor());
-      stmtConta.setInt(2, conta.getIdBase());
-      stmtConta.setDate(3, Date.valueOf(conta.getDataCompra()));
-      stmtConta.setDouble(4, conta.getValorTotal());
-      
-      ResultSet rs = stmtConta.executeQuery();
-      int idGerado = 0;
-      if (rs.next()) idGerado = rs.getInt("id");
+      PreparedStatement stmtC = conn.prepareStatement(sqlC);
+      stmtC.setInt(1, conta.getIdFornecedor());
+      stmtC.setInt(2, conta.getIdBase());
+      stmtC.setDate(3, Date.valueOf(conta.getDataCompra()));
+      stmtC.setDouble(4, conta.getValorTotal());
 
-      // 2. Salva as Parcelas
-      stmtParcela = conn.prepareStatement(sqlParcela);
+      ResultSet rs = stmtC.executeQuery();
+      int idConta = 0;
+      if (rs.next()) idConta = rs.getInt(1);
+
+      PreparedStatement stmtP = conn.prepareStatement(sqlP);
       for (ParcelaPagar p : conta.getParcelas()) {
-        stmtParcela.setInt(1, idGerado);
-        stmtParcela.setInt(2, p.getNumeroParcela());
-        stmtParcela.setDate(3, Date.valueOf(p.getVencimento()));
-        stmtParcela.setDouble(4, p.getValor());
-        stmtParcela.executeUpdate();
+        stmtP.setInt(1, idConta);
+        stmtP.setInt(2, p.getNumero());
+        stmtP.setDate(3, Date.valueOf(p.getVencimento()));
+        stmtP.setDouble(4, p.getValor());
+        stmtP.executeUpdate();
       }
-
-      conn.commit(); // Confirma
+      conn.commit();
       return true;
-
     } catch (SQLException e) {
-      try { if(conn != null) conn.rollback(); } catch(SQLException ex) {}
-      System.out.println("Erro ao salvar conta: " + e.getMessage());
+      try { if(conn != null) conn.rollback(); } catch(Exception ex) {}
+      e.printStackTrace();
       return false;
-    } finally {
-      // Feche as conexões aqui (omitido para brevidade)
     }
   }
 }

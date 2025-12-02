@@ -2,21 +2,16 @@ package model;
 import java.time.LocalDate;
 
 public class ParcelaPagar {
-  private int id;
-  private int numeroParcela;
+  private int numero;
   private LocalDate vencimento;
   private double valor;
-  private String status;
 
-  public ParcelaPagar(int numeroParcela, LocalDate vencimento, double valor) {
-    this.numeroParcela = numeroParcela;
+  public ParcelaPagar(int numero, LocalDate vencimento, double valor) {
+    this.numero = numero;
     this.vencimento = vencimento;
     this.valor = valor;
-    this.status = "PENDENTE";
   }
-  // Getters e Setters
-  public int getNumeroParcela() { return numeroParcela; }
+  public int getNumero() { return numero; }
   public LocalDate getVencimento() { return vencimento; }
   public double getValor() { return valor; }
-  public String getStatus() { return status; }
 }

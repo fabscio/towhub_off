@@ -15,39 +15,42 @@ public class OrdemServico {
   private String origem;
   private String destino;
   
-  // IDs (Chaves Estrangeiras)
+  // Chaves Estrangeiras
   private int idCliente;
   private int idBase;
   private int idMotorista;
   private int idAnalista;
-  
+
   private String formaPagamento;
   private double valorTotal;
-  
-  // Lista de Itens (O detalhe)
+
   private List<ItemOrdemServico> itens = new ArrayList<>();
 
   public OrdemServico() {}
 
-  // Método para adicionar item na lista
   public void adicionarItem(ItemOrdemServico item) {
     this.itens.add(item);
     this.valorTotal += item.getSubtotal();
   }
-  
-  // Getters e Setters (Resumido para os principais)
-  public LocalDate getDataEmissao() { return dataEmissao; }
-  public void setDataEmissao(LocalDate data) { this.dataEmissao = data; }
-  
-  public List<ItemOrdemServico> getItens() { return itens; }
-  
-  public double getValorTotal() { return valorTotal; }
-  public void setValorTotal(double total) { this.valorTotal = total; }
 
-  // ... Adicione os Getters/Setters para todos os campos acima ...
-  public void setIdCliente(int id) { this.idCliente = id; }
+  // Getters e Setters
+  public int getId() { return id; }
+  public void setId(int id) { this.id = id; }
+  public LocalDate getDataEmissao() { return dataEmissao; }
+  public void setDataEmissao(LocalDate dataEmissao) { this.dataEmissao = dataEmissao; }
+  public String getVeiculoModelo() { return veiculoModelo; }
+  public void setVeiculoModelo(String veiculoModelo) { this.veiculoModelo = veiculoModelo; }
+  public String getVeiculoPlaca() { return veiculoPlaca; }
+  public void setVeiculoPlaca(String veiculoPlaca) { this.veiculoPlaca = veiculoPlaca; }
+  public String getContato() { return contato; }
+  public void setContato(String contato) { this.contato = contato; }
+  public double getValorTotal() { return valorTotal; }
+  public void setValorTotal(double valorTotal) { this.valorTotal = valorTotal; }
   public int getIdCliente() { return idCliente; }
-  public void setIdBase(int id) { this.idBase = id; }
+  public void setIdCliente(int idCliente) { this.idCliente = idCliente; }
   public int getIdBase() { return idBase; }
-  // etc...
+  public void setIdBase(int idBase) { this.idBase = idBase; }
+  public List<ItemOrdemServico> getItens() { return itens; }
+
+  // Adicione os outros getters/setters conforme necessidade (motorista, analista, etc)
 }

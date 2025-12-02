@@ -5,31 +5,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RelatorioDAO {
-  
-  // Método genérico pode ser difícil, melhor fazer específico
-  public List<String[]> buscarRelatorioOS(String base, String cliente) {
-    List<String[]> resultados = new ArrayList<>();
-    
-    // Usa a VIEW que criamos no SQL
-    String sql = "SELECT * FROM relatorio_os WHERE 1=1"; 
-    
-    if (base != null && !base.isEmpty()) sql += " AND base = '" + base + "'";
-    if (cliente != null && !cliente.isEmpty()) sql += " AND cliente LIKE '%" + cliente + "%'";
-    
+  // Retorna uma lista de Arrays de String para facilitar a exibição na tabela genérica
+  public List<String[]> buscarOS(String base, String cliente) {
+    List<String[]> lista = new ArrayList<>();
+    String sql = "SELECT * FROM relatorio_os WHERE 1=1";
+    if (base != null) sql += " AND base = '" + base + "'";
+    // Adicione mais filtros se precisar
+
     try (Connection conn = ConexaoFactory.getConexao();
          Statement stmt = conn.createStatement();
          ResultSet rs = stmt.executeQuery(sql)) {
-         
-       while(rs.next()) {
-         // Guarda os dados num array de strings simples para exibir na tabela
-         resultados.add(new String[]{
-           String.valueOf(rs.getInt("id")),
-           rs.getString("cliente"),
-           String.valueOf(rs.getDouble("valor_total"))
-           // ... outros campos
-         });
-       }
+
+      while(rs.next()) {
+        lista.add(new String[]{
+          String.valueOf(rs.getInt("id")),
+          String.valueOf(rs.getDate("data")),
+          rs.getString("cliente"),
+          rs.getString("motorista"),
+          rs.getString("veiculo"),
+          String.valueOf(rs.getDouble("valor_total"))
+        });
+      }
     } catch (Exception e) { e.printStackTrace(); }
-    return resultados;
+    return lista;
   }
 }
