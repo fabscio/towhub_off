@@ -5,15 +5,21 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import model.Base;
 import model.ContaPagar;
+import model.Fornecedor;
 import model.ParcelaPagar;
+import model.dao.BaseDAO;
 import model.dao.ContaPagarDAO;
+import model.dao.FornecedorDAO;
+import util.Alerta;
 import java.time.LocalDate;
 
 public class ContasPagarController {
 
   @FXML private DatePicker dtCompra;
-  @FXML private ComboBox<String> cbBase, cbFornecedor;
+  @FXML private ComboBox<Base> cbBase;
+  @FXML private ComboBox<Fornecedor> cbFornecedor;
   @FXML private TextField txtValorParcela;
   @FXML private DatePicker dtVencimentoParcela;
   @FXML private Label lblTotal;
@@ -28,8 +34,10 @@ public class ContasPagarController {
 
   @FXML
   public void initialize() {
-    cbBase.setItems(FXCollections.observableArrayList("Matriz", "Filial Norte"));
-    cbFornecedor.setItems(FXCollections.observableArrayList("Auto Peças Zé", "Posto Ipiranga"));
+    // CARREGA DO BANCO
+    cbBase.setItems(FXCollections.observableArrayList(new BaseDAO().listar()));
+    cbFornecedor.setItems(FXCollections.observableArrayList(new FornecedorDAO().listar()));
+
     dtCompra.setValue(LocalDate.now());
 
     colIdParcela.setCellValueFactory(new PropertyValueFactory<>("numero"));
@@ -45,12 +53,12 @@ public class ContasPagarController {
       double valor = Double.parseDouble(txtValorParcela.getText().replace(",", "."));
       LocalDate ven = dtVencimentoParcela.getValue();
 
-      if (ven == null) return;
+      if (ven == null) { Alerta.mostrarErro("Erro", "Defina a data."); return; }
 
       listaParcelas.add(new ParcelaPagar(contadorParcela++, ven, valor));
       atualizarTotal();
 
-    } catch (NumberFormatException e) { System.out.println("Valor inválido"); }
+    } catch (NumberFormatException e) { Alerta.mostrarErro("Erro", "Valor inválido"); }
   }
 
   @FXML
@@ -69,9 +77,14 @@ public class ContasPagarController {
 
   @FXML
   public void acaoSalvar() {
+    if(cbFornecedor.getValue() == null || cbBase.getValue() == null) {
+        Alerta.mostrarErro("Erro", "Selecione Base e Fornecedor.");
+        return;
+    }
+
     ContaPagar conta = new ContaPagar();
-    conta.setIdFornecedor(1); // Simulação
-    conta.setIdBase(1);       // Simulação
+    conta.setIdFornecedor(cbFornecedor.getValue().getId()); // ID Real
+    conta.setIdBase(cbBase.getValue().getId());             // ID Real
     conta.setDataCompra(dtCompra.getValue());
 
     for (ParcelaPagar p : listaParcelas) {
@@ -79,9 +92,10 @@ public class ContasPagarController {
     }
 
     if (new ContaPagarDAO().salvar(conta)) {
-      System.out.println("Compra registrada com sucesso!");
+      Alerta.mostrarSucesso("Sucesso", "Compra registrada!");
       listaParcelas.clear();
       atualizarTotal();
+      contadorParcela = 1;
     }
   }
 }

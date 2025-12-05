@@ -10,10 +10,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import model.*;
 import model.dao.*;
-import util.Alerta; // Assumindo que você tem a classe util.Alerta
+import util.Alerta;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 public class OrdemServicoController {
@@ -21,7 +20,7 @@ public class OrdemServicoController {
     // --- Campos do Formulário ---
     @FXML private TextField txtId;
     @FXML private DatePicker dtData;
-    @FXML private ComboBox<String> cbSolicitacao; // Ex: Telefone, App, Email
+    @FXML private ComboBox<String> cbSolicitacao;
 
     @FXML private ComboBox<Cliente> cbCliente;
     @FXML private TextField txtContato;
@@ -29,11 +28,13 @@ public class OrdemServicoController {
 
     @FXML private TextField txtVeiculo;
     @FXML private TextField txtPlaca;
+
+    // Campos que dependem se é PJ ou PF
     @FXML private TextField txtPrazo;
+    @FXML private ComboBox<String> cbPagamento;
 
     @FXML private ComboBox<Funcionario> cbMotorista;
     @FXML private ComboBox<Funcionario> cbAnalista;
-    @FXML private ComboBox<String> cbPagamento; // Ex: Dinheiro, Cartão, Faturado
 
     @FXML private TextField txtOrigem;
     @FXML private TextField txtDestino;
@@ -49,24 +50,20 @@ public class OrdemServicoController {
 
     // --- Dados Internos ---
     private ObservableList<ItemOrdemServico> listaItens = FXCollections.observableArrayList();
-    private OrdemServico osAtual; // Objeto que estamos construindo
+    private OrdemServico osAtual;
+
+    // Listas de Pagamento
+    private final ObservableList<String> pgtoGeral = FXCollections.observableArrayList("Cartão Crédito", "Cartão Débito", "Dinheiro/Pix");
+    private final ObservableList<String> pgtoPJ = FXCollections.observableArrayList("Faturado", "Cartão Crédito", "Cartão Débito", "Dinheiro/Pix");
 
     @FXML
     public void initialize() {
-        osAtual = new OrdemServico(); // Inicializa nova OS
+        osAtual = new OrdemServico();
         dtData.setValue(LocalDate.now());
 
         configurarTabela();
         carregarCombos();
-    }
-
-    private void configuringTabela() {
-        colServico.setCellValueFactory(new PropertyValueFactory<>("nomeServico"));
-        colQtd.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
-        colValor.setCellValueFactory(new PropertyValueFactory<>("valorUnitario"));
-        colSubtotal.setCellValueFactory(new PropertyValueFactory<>("subtotal"));
-
-        tabelaServicos.setItems(listaItens);
+        configurarLogicaPJ(); // Nova lógica de PJ
     }
 
     private void configurarTabela() {
@@ -78,35 +75,55 @@ public class OrdemServicoController {
         tabelaServicos.setItems(listaItens);
     }
 
+    // Configura visibilidade de prazo e opções de pagamento
+    private void configurarLogicaPJ() {
+        // Inicialmente desabilita prazo e usa lista básica
+        txtPrazo.setDisable(true);
+        cbPagamento.setItems(pgtoGeral);
+
+        cbCliente.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                if (newVal instanceof PessoaJuridica) {
+                    // É PJ: Habilita Faturado e Prazo
+                    cbPagamento.setItems(pgtoPJ);
+                    txtPrazo.setDisable(false);
+                } else {
+                    // É PF: Apenas pagamentos à vista e trava Prazo
+                    cbPagamento.setItems(pgtoGeral);
+                    txtPrazo.setDisable(true);
+                    txtPrazo.clear();
+
+                    // Se estava selecionado "Faturado", limpa a seleção
+                    if ("Faturado".equals(cbPagamento.getValue())) {
+                        cbPagamento.getSelectionModel().clearSelection();
+                    }
+                }
+            }
+        });
+    }
 
     private void carregarCombos() {
-        // Carrega dados do Banco usando os DAOs
         cbCliente.setItems(FXCollections.observableArrayList(new ClienteDAO().listar()));
         cbBase.setItems(FXCollections.observableArrayList(new BaseDAO().listar()));
 
-        // Filtra Funcionários por função
         FuncionarioDAO funcDao = new FuncionarioDAO();
         cbMotorista.setItems(FXCollections.observableArrayList(funcDao.listarPorFuncao("Motorista")));
         cbAnalista.setItems(FXCollections.observableArrayList(funcDao.listarPorFuncao("Analista")));
 
-        // Combos Estáticos
         cbSolicitacao.setItems(FXCollections.observableArrayList("Telefone", "WhatsApp", "Email", "Seguradora"));
-        cbPagamento.setItems(FXCollections.observableArrayList("Faturado", "Cartão Crédito", "Cartão Débito", "Dinheiro/Pix"));
+
+        // cbPagamento é configurado dinamicamente no configurarLogicaPJ()
     }
 
-    // --- AÇÃO: Adicionar Serviço com POPUP ---
     @FXML
     public void handleAdicionarServico() {
-        // 1. Criar o Dialog
         Dialog<ItemOrdemServico> dialog = new Dialog<>();
         dialog.setTitle("Adicionar Serviço");
         dialog.setHeaderText("Selecione o serviço e a quantidade");
 
-        // 2. Botões
         ButtonType btnAdicionar = new ButtonType("Adicionar", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(btnAdicionar, ButtonType.CANCEL);
 
-        // 3. Layout do Popup
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -115,13 +132,11 @@ public class OrdemServicoController {
         ComboBox<Servico> cbServicoPopup = new ComboBox<>();
         cbServicoPopup.setPromptText("Selecione...");
         cbServicoPopup.setPrefWidth(200);
-        // Carrega serviços do banco para o popup
         cbServicoPopup.setItems(FXCollections.observableArrayList(new ServicoDAO().listar()));
 
         Spinner<Integer> spinnerQtd = new Spinner<>(1, 100, 1);
         Label lblValorUnit = new Label("Valor Unit: R$ 0,00");
 
-        // Atualiza label ao trocar serviço
         cbServicoPopup.setOnAction(e -> {
             Servico s = cbServicoPopup.getValue();
             if (s != null) {
@@ -138,7 +153,6 @@ public class OrdemServicoController {
         dialog.getDialogPane().setContent(grid);
         Platform.runLater(cbServicoPopup::requestFocus);
 
-        // 4. Converter Resultado
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == btnAdicionar) {
                 Servico s = cbServicoPopup.getValue();
@@ -148,18 +162,16 @@ public class OrdemServicoController {
                     item.setNomeServico(s.getNome());
                     item.setValorUnitario(s.getValorPadrao());
                     item.setQuantidade(spinnerQtd.getValue());
-                    // O setter de qtd já calcula o subtotal no Model atualizado
                     return item;
                 }
             }
             return null;
         });
 
-        // 5. Processar Retorno
         Optional<ItemOrdemServico> result = dialog.showAndWait();
         result.ifPresent(item -> {
             listaItens.add(item);
-            osAtual.adicionarItem(item); // Atualiza total no objeto OS
+            osAtual.adicionarItem(item);
             atualizarTotalNaTela();
         });
     }
@@ -169,7 +181,7 @@ public class OrdemServicoController {
         ItemOrdemServico item = tabelaServicos.getSelectionModel().getSelectedItem();
         if (item != null) {
             listaItens.remove(item);
-            osAtual.removerItem(item); // Atualiza total no objeto OS
+            osAtual.removerItem(item);
             atualizarTotalNaTela();
         } else {
             Alerta.mostrarErro("Erro", "Selecione um item para remover.");
@@ -182,7 +194,6 @@ public class OrdemServicoController {
 
     @FXML
     public void handleConcluir() {
-        // Validação Simples
         if (cbCliente.getValue() == null || cbBase.getValue() == null) {
             Alerta.mostrarErro("Erro", "Preencha o Cliente e a Base!");
             return;
@@ -192,7 +203,6 @@ public class OrdemServicoController {
             return;
         }
 
-        // Preencher dados da OS
         osAtual.setDataEmissao(dtData.getValue());
         osAtual.setIdCliente(cbCliente.getValue().getId());
         osAtual.setIdBase(cbBase.getValue().getId());
@@ -209,11 +219,12 @@ public class OrdemServicoController {
         osAtual.setDestino(txtDestino.getText());
 
         try {
-            if (!txtPrazo.getText().isEmpty())
+            if (!txtPrazo.isDisabled() && !txtPrazo.getText().isEmpty())
                 osAtual.setPrazo(Integer.parseInt(txtPrazo.getText()));
-        } catch (NumberFormatException e) { /* ignora */ }
+            else
+                osAtual.setPrazo(0); // Sem prazo se for PF ou vazio
+        } catch (NumberFormatException e) { osAtual.setPrazo(0); }
 
-        // Salvar no Banco
         if (new OrdemServicoDAO().salvar(osAtual)) {
             Alerta.mostrarSucesso("Sucesso", "Ordem de Serviço criada com sucesso!");
             limparTela();
@@ -223,7 +234,7 @@ public class OrdemServicoController {
     }
 
     private void limparTela() {
-        osAtual = new OrdemServico(); // Reseta objeto
+        osAtual = new OrdemServico();
         listaItens.clear();
         atualizarTotalNaTela();
 
@@ -232,6 +243,7 @@ public class OrdemServicoController {
 
         cbCliente.getSelectionModel().clearSelection();
         cbMotorista.getSelectionModel().clearSelection();
-        // ... limpar outros combos se desejar
+        cbAnalista.getSelectionModel().clearSelection();
+        cbPagamento.getSelectionModel().clearSelection();
     }
 }

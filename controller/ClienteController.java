@@ -11,7 +11,6 @@ import java.util.List;
 
 public class ClienteController {
 
-  // --- Elementos da Interface Gráfica ---
   @FXML private RadioButton rbPF;
   @FXML private RadioButton rbPJ;
   @FXML private ToggleGroup grupoTipoCliente;
@@ -21,7 +20,7 @@ public class ClienteController {
   @FXML private TextField txtEmail;
   @FXML private TextField txtEndereco;
 
-  @FXML private ComboBox<Base> cbBase; // Agora usa o objeto Base corretamente
+  @FXML private ComboBox<Base> cbBase;
 
   @FXML private TextField txtCpf;
   @FXML private TextField txtCnpj;
@@ -71,10 +70,12 @@ public class ClienteController {
 
   @FXML
   public void acaoSalvar() {
+    // 1. Captura os dados da tela
     String nome = txtNome.getText();
     String telefone = txtTelefone.getText();
     String email = txtEmail.getText();
     String endereco = txtEndereco.getText();
+    String gestor = txtGestor.getText(); // Captura o gestor
 
     Base baseSelecionada = cbBase.getValue();
     if (baseSelecionada == null) {
@@ -94,7 +95,10 @@ public class ClienteController {
       documento = txtCnpj.getText();
     }
 
-    Cliente cliente = new Cliente(tipo, nome, documento, telefone, email, endereco, idBase);
+    // 2. Cria o objeto Cliente (AGORA as variáveis já existem)
+    Cliente cliente = new Cliente(tipo, nome, documento, gestor, telefone, email, endereco, idBase);
+
+    // 3. Salva no banco
     ClienteDAO dao = new ClienteDAO();
 
     if (dao.salvar(cliente)) {

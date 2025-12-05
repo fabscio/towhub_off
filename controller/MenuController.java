@@ -14,7 +14,7 @@ public class MenuController {
 
     @FXML private BorderPane layoutPrincipal;
 
-    // --- Método Genérico para Trocar de Tela ---
+    // Método Genérico para Trocar de Tela
     private void carregarTela(String caminhoFxml) {
         try {
             URL url = getClass().getResource(caminhoFxml);
@@ -23,7 +23,7 @@ public class MenuController {
                 return;
             }
             Parent novaTela = FXMLLoader.load(url);
-            layoutPrincipal.setCenter(novaTela); // Troca apenas o miolo
+            layoutPrincipal.setCenter(novaTela);
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Erro ao carregar tela: " + e.getMessage());
@@ -54,7 +54,6 @@ public class MenuController {
     @FXML
     public void acaoLogout(ActionEvent event) {
         try {
-            // Volta para o Login
             Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
             Stage palcoAtual = (Stage) layoutPrincipal.getScene().getWindow();
             palcoAtual.close();

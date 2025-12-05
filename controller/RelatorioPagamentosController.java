@@ -3,26 +3,33 @@ package controller;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import model.Base;
+import model.Fornecedor;
+import model.dao.BaseDAO;
+import model.dao.FornecedorDAO;
 
 public class RelatorioPagamentosController {
-    @FXML private ComboBox<String> cbBase, cbFornecedor, cbStatus;
+    @FXML private ComboBox<Base> cbBase;
+    @FXML private ComboBox<Fornecedor> cbFornecedor;
+    @FXML private ComboBox<String> cbStatus;
     @FXML private DatePicker dtInicio, dtFim;
     @FXML private TableView<?> tabelaResultados;
     @FXML private Label lblTotal;
 
-    @FXML private TableColumn<?, ?> colId, colFornecedor, colVencimento, colStatus, colValor;
-
     @FXML public void initialize() {
+        // CARREGA DADOS
+        cbBase.setItems(FXCollections.observableArrayList(new BaseDAO().listar()));
+        cbFornecedor.setItems(FXCollections.observableArrayList(new FornecedorDAO().listar()));
         cbStatus.setItems(FXCollections.observableArrayList("Todos", "Pago", "Pendente"));
     }
 
     @FXML public void acaoPesquisar() {
         System.out.println("Pesquisando Pagamentos...");
-        lblTotal.setText("R$ 0,00");
     }
 
     @FXML public void acaoLimpar() {
         if(tabelaResultados != null) tabelaResultados.getItems().clear();
-        lblTotal.setText("R$ 0,00");
+        cbBase.getSelectionModel().clearSelection();
+        cbFornecedor.getSelectionModel().clearSelection();
     }
 }

@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import model.Fornecedor;
 import model.dao.FornecedorDAO;
+import util.Alerta;
 
 public class FornecedorController {
 
@@ -18,7 +19,6 @@ public class FornecedorController {
 
   @FXML
   public void initialize() {
-    // Listener para troca de PF/PJ
     grupoTipoFornecedor.selectedToggleProperty().addListener((obs, o, n) -> {
       atualizarVisibilidade(rbPJ.isSelected());
     });
@@ -36,6 +36,11 @@ public class FornecedorController {
   @FXML
   public void acaoSalvar() {
     String nome = txtNome.getText();
+    if (nome.isEmpty()) {
+        Alerta.mostrarErro("Erro", "O Nome é obrigatório.");
+        return;
+    }
+
     String documento = rbPF.isSelected() ? txtCpf.getText() : txtCnpj.getText();
     String tipo = rbPF.isSelected() ? "PF" : "PJ";
 
@@ -44,8 +49,10 @@ public class FornecedorController {
 
     FornecedorDAO dao = new FornecedorDAO();
     if (dao.salvar(f)) {
-      System.out.println("Fornecedor salvo com sucesso!");
+      Alerta.mostrarSucesso("Sucesso", "Fornecedor salvo com sucesso!");
       limparCampos();
+    } else {
+      Alerta.mostrarErro("Erro", "Não foi possível salvar o fornecedor.");
     }
   }
 

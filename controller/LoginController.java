@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import model.dao.FuncionarioDAO;
+import util.Alerta; // Opcional aqui, mas bom ter
 import java.io.IOException;
 
 public class LoginController {
@@ -24,16 +25,14 @@ public class LoginController {
 
         FuncionarioDAO dao = new FuncionarioDAO();
 
-        // Se o banco não estiver acessível, o DAO trata ou retorna false
         if (dao.autenticar(cpf, senha)) {
             abrirMenu();
         } else {
-            // Se lblMensagem for nulo (não estiver no FXML), evitamos o erro
             if (lblMensagem != null) {
                 lblMensagem.setText("Acesso negado. Verifique CPF/Senha.");
                 lblMensagem.setStyle("-fx-text-fill: #c0392b;");
             } else {
-                System.out.println("Acesso negado. (Label de mensagem não encontrado na tela)");
+                Alerta.mostrarErro("Login", "Acesso Negado.");
             }
         }
     }
@@ -43,21 +42,23 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/menu.fxml"));
             Parent root = loader.load();
 
-            // Pega a janela atual através do botão
+            // Fecha login
             Stage palcoAtual = (Stage) btnEntrar.getScene().getWindow();
             palcoAtual.close();
 
-            // Abre o Menu
+            // Abre Menu
             Stage palcoMenu = new Stage();
+            // IMPORTANTE: new Scene(root) usa o tamanho definido no FXML (1100x680)
             palcoMenu.setScene(new Scene(root));
             palcoMenu.setTitle("Sistema Tow Hub");
-            palcoMenu.setResizable(false);
+            // Permitir redimensionar é bom para monitores pequenos
+            palcoMenu.setResizable(true);
             palcoMenu.show();
             palcoMenu.centerOnScreen();
 
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Erro ao carregar o menu: " + e.getMessage());
+            Alerta.mostrarErro("Erro Crítico", "Erro ao carregar o menu: " + e.getMessage());
         }
     }
 }

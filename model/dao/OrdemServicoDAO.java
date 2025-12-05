@@ -7,26 +7,39 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class OrdemServicoDAO {
 
     public boolean salvar(OrdemServico os) {
         Connection conn = null;
-        String sqlOs = "INSERT INTO ordem_servico (data_emissao, id_cliente, id_base, veiculo_modelo, veiculo_placa, contato_segurado, valor_total) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        String sqlOs = "INSERT INTO ordem_servico (" +
+                "data_emissao, id_cliente, id_base, id_motorista, id_analista, " +
+                "veiculo_modelo, veiculo_placa, contato_segurado, tipo_solicitacao, " +
+                "endereco_origem, endereco_destino, prazo, forma_pagamento, valor_total" +
+                ") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+
         String sqlItem = "INSERT INTO itens_os (id_ordem_servico, id_servico, quantidade, valor_unitario, subtotal) VALUES (?, ?, ?, ?, ?)";
 
         try {
             conn = ConexaoFactory.getConexao();
-            conn.setAutoCommit(false); // Transação
+            conn.setAutoCommit(false);
 
             PreparedStatement stmtOs = conn.prepareStatement(sqlOs);
             stmtOs.setDate(1, Date.valueOf(os.getDataEmissao()));
             stmtOs.setInt(2, os.getIdCliente());
             stmtOs.setInt(3, os.getIdBase());
-            stmtOs.setString(4, os.getVeiculoModelo());
-            stmtOs.setString(5, os.getVeiculoPlaca());
-            stmtOs.setString(6, os.getContato());
-            stmtOs.setDouble(7, os.getValorTotal());
+
+            if (os.getIdMotorista() > 0) stmtOs.setInt(4, os.getIdMotorista()); else stmtOs.setNull(4, Types.INTEGER);
+            if (os.getIdAnalista() > 0) stmtOs.setInt(5, os.getIdAnalista()); else stmtOs.setNull(5, Types.INTEGER);
+
+            stmtOs.setString(6, os.getVeiculoModelo());
+            stmtOs.setString(7, os.getVeiculoPlaca());
+            stmtOs.setString(8, os.getContato());
+            stmtOs.setString(9, os.getTipoSolicitacao());
+            stmtOs.setString(10, os.getOrigem());
+            stmtOs.setString(11, os.getDestino());
+            stmtOs.setInt(12, os.getPrazo());
+            stmtOs.setString(13, os.getFormaPagamento());
+            stmtOs.setDouble(14, os.getValorTotal());
 
             ResultSet rs = stmtOs.executeQuery();
             int idGerado = 0;
@@ -51,6 +64,7 @@ public class OrdemServicoDAO {
         }
     }
 
+    // Método Reintegrado: BUSCAR POR ID
     public OrdemServico buscarPorId(int id) {
         OrdemServico os = null;
         String sql = "SELECT * FROM ordem_servico WHERE id = ?";
@@ -73,6 +87,7 @@ public class OrdemServicoDAO {
                 os.setValorTotal(rs.getDouble("valor_total"));
                 os.setIdCliente(rs.getInt("id_cliente"));
                 os.setIdBase(rs.getInt("id_base"));
+                // Preencha outros campos se necessário para a edição
             }
 
             if (os != null) {
@@ -93,9 +108,9 @@ public class OrdemServicoDAO {
         return os;
     }
 
+    // Método Reintegrado: ATUALIZAR
     public boolean atualizar(OrdemServico os) {
         Connection conn = null;
-        // Estratégia simples: Update cabeçalho, Delete itens antigos, Insert itens novos
         String sqlOs = "UPDATE ordem_servico SET data_emissao=?, veiculo_modelo=?, veiculo_placa=?, contato_segurado=?, valor_total=? WHERE id=?";
         String sqlDel = "DELETE FROM itens_os WHERE id_ordem_servico=?";
         String sqlIns = "INSERT INTO itens_os (id_ordem_servico, id_servico, quantidade, valor_unitario, subtotal) VALUES (?, ?, ?, ?, ?)";
@@ -113,10 +128,12 @@ public class OrdemServicoDAO {
             stmtOs.setInt(6, os.getId());
             stmtOs.executeUpdate();
 
+            // Remove itens antigos
             PreparedStatement stmtDel = conn.prepareStatement(sqlDel);
             stmtDel.setInt(1, os.getId());
             stmtDel.executeUpdate();
 
+            // Insere itens novos (da lista atual)
             PreparedStatement stmtIns = conn.prepareStatement(sqlIns);
             for(ItemOrdemServico item : os.getItens()) {
                 stmtIns.setInt(1, os.getId());
@@ -136,11 +153,8 @@ public class OrdemServicoDAO {
         }
     }
 
-    // Adicionar este método dentro da classe OrdemServicoDAO existente
-
-    // Busca OS que ainda não foram faturadas (id_lote IS NULL)
-    public ArrayList<OrdemServico> listarPendentes() {
-        ArrayList<OrdemServico> lista = new ArrayList<>();
+    public List<OrdemServico> listarPendentes() {
+        List<OrdemServico> lista = new ArrayList<>();
         String sql = "SELECT * FROM ordem_servico WHERE id_lote IS NULL ORDER BY data_emissao";
 
         try (Connection conn = ConexaoFactory.getConexao();
@@ -152,7 +166,6 @@ public class OrdemServicoDAO {
                 os.setId(rs.getInt("id"));
                 os.setDataEmissao(rs.getDate("data_emissao").toLocalDate());
                 os.setValorTotal(rs.getDouble("valor_total"));
-                // ... preencher outros campos relevantes para exibição
                 lista.add(os);
             }
         } catch (SQLException e) {
