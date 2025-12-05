@@ -8,6 +8,8 @@ import model.Funcionario;
 import model.dao.BaseDAO;
 import model.dao.FuncionarioDAO;
 import util.Alerta;
+import util.Documento; // Import Documento
+import util.Monetario; // Import Monetario
 
 public class FuncionarioController {
 
@@ -15,7 +17,6 @@ public class FuncionarioController {
   @FXML private PasswordField txtSenha;
   @FXML private ComboBox<String> cbFuncao, cbCategoria;
 
-  // Alterado para tipo Base
   @FXML private ComboBox<Base> cbBase;
 
   // Campos Motorista
@@ -49,16 +50,19 @@ public class FuncionarioController {
       }
 
       String nome = txtNome.getText();
-      String cpf = txtCpf.getText();
+
+      // --- CORREÇÃO 1: Limpa CPF ---
+      String cpfLimpo = Documento.limpar(txtCpf.getText());
+
+      // --- CORREÇÃO 2: Converte Salário com segurança ---
       double salario = 0.0;
       if (!txtSalario.getText().isEmpty()) {
-          salario = Double.parseDouble(txtSalario.getText().replace(",", "."));
+          salario = Monetario.converterParaDouble(txtSalario.getText());
       }
 
-      // Pega o ID real da base selecionada
       int idBase = cbBase.getValue().getId();
 
-      Funcionario f = new Funcionario(nome, cpf, txtSenha.getText(), cbFuncao.getValue(), idBase,
+      Funcionario f = new Funcionario(nome, cpfLimpo, txtSenha.getText(), cbFuncao.getValue(), idBase,
                                       salario, txtCarga.getText(), txtTelefone.getText(), txtEndereco.getText(),
                                       txtCnh.getText(), cbCategoria.getValue());
 
@@ -68,7 +72,10 @@ public class FuncionarioController {
         limparCampos();
       }
     } catch (NumberFormatException e) {
-      Alerta.mostrarErro("Erro", "Salário inválido.");
+      Alerta.mostrarErro("Erro", "Salário inválido. Digite apenas números.");
+    } catch (Exception e) {
+        e.printStackTrace();
+        Alerta.mostrarErro("Erro", "Erro ao salvar: " + e.getMessage());
     }
   }
 
@@ -76,5 +83,7 @@ public class FuncionarioController {
       txtNome.clear(); txtCpf.clear(); txtSenha.clear();
       txtSalario.clear(); txtCarga.clear(); txtTelefone.clear(); txtEndereco.clear();
       cbBase.getSelectionModel().clearSelection();
+      // Se quiser limpar campos de motorista também
+      txtCnh.clear(); cbCategoria.getSelectionModel().clearSelection();
   }
 }

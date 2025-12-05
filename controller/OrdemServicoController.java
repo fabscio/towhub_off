@@ -17,7 +17,6 @@ import java.util.Optional;
 
 public class OrdemServicoController {
 
-    // --- Campos do Formulário ---
     @FXML private TextField txtId;
     @FXML private DatePicker dtData;
     @FXML private ComboBox<String> cbSolicitacao;
@@ -29,7 +28,6 @@ public class OrdemServicoController {
     @FXML private TextField txtVeiculo;
     @FXML private TextField txtPlaca;
 
-    // Campos que dependem se é PJ ou PF
     @FXML private TextField txtPrazo;
     @FXML private ComboBox<String> cbPagamento;
 
@@ -39,7 +37,6 @@ public class OrdemServicoController {
     @FXML private TextField txtOrigem;
     @FXML private TextField txtDestino;
 
-    // --- Tabela de Serviços ---
     @FXML private TableView<ItemOrdemServico> tabelaServicos;
     @FXML private TableColumn<ItemOrdemServico, String> colServico;
     @FXML private TableColumn<ItemOrdemServico, Integer> colQtd;
@@ -48,11 +45,9 @@ public class OrdemServicoController {
 
     @FXML private Label lblValorTotal;
 
-    // --- Dados Internos ---
     private ObservableList<ItemOrdemServico> listaItens = FXCollections.observableArrayList();
     private OrdemServico osAtual;
 
-    // Listas de Pagamento
     private final ObservableList<String> pgtoGeral = FXCollections.observableArrayList("Cartão Crédito", "Cartão Débito", "Dinheiro/Pix");
     private final ObservableList<String> pgtoPJ = FXCollections.observableArrayList("Faturado", "Cartão Crédito", "Cartão Débito", "Dinheiro/Pix");
 
@@ -63,7 +58,7 @@ public class OrdemServicoController {
 
         configurarTabela();
         carregarCombos();
-        configurarLogicaPJ(); // Nova lógica de PJ
+        configurarLogicaPJ();
     }
 
     private void configurarTabela() {
@@ -75,25 +70,22 @@ public class OrdemServicoController {
         tabelaServicos.setItems(listaItens);
     }
 
-    // Configura visibilidade de prazo e opções de pagamento
     private void configurarLogicaPJ() {
-        // Inicialmente desabilita prazo e usa lista básica
+        // Padrão (PF): Desabilita prazo e usa lista reduzida
         txtPrazo.setDisable(true);
         cbPagamento.setItems(pgtoGeral);
 
         cbCliente.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
-                if (newVal instanceof PessoaJuridica) {
-                    // É PJ: Habilita Faturado e Prazo
+                // CORREÇÃO: Verifica o campo tipo ("PJ") em vez da classe
+                if ("PJ".equals(newVal.getTipo())) {
                     cbPagamento.setItems(pgtoPJ);
                     txtPrazo.setDisable(false);
                 } else {
-                    // É PF: Apenas pagamentos à vista e trava Prazo
                     cbPagamento.setItems(pgtoGeral);
                     txtPrazo.setDisable(true);
                     txtPrazo.clear();
 
-                    // Se estava selecionado "Faturado", limpa a seleção
                     if ("Faturado".equals(cbPagamento.getValue())) {
                         cbPagamento.getSelectionModel().clearSelection();
                     }
@@ -111,8 +103,6 @@ public class OrdemServicoController {
         cbAnalista.setItems(FXCollections.observableArrayList(funcDao.listarPorFuncao("Analista")));
 
         cbSolicitacao.setItems(FXCollections.observableArrayList("Telefone", "WhatsApp", "Email", "Seguradora"));
-
-        // cbPagamento é configurado dinamicamente no configurarLogicaPJ()
     }
 
     @FXML
@@ -222,7 +212,7 @@ public class OrdemServicoController {
             if (!txtPrazo.isDisabled() && !txtPrazo.getText().isEmpty())
                 osAtual.setPrazo(Integer.parseInt(txtPrazo.getText()));
             else
-                osAtual.setPrazo(0); // Sem prazo se for PF ou vazio
+                osAtual.setPrazo(0);
         } catch (NumberFormatException e) { osAtual.setPrazo(0); }
 
         if (new OrdemServicoDAO().salvar(osAtual)) {

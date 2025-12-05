@@ -48,18 +48,30 @@ public class ContasPagarController {
   }
 
   @FXML
-  public void acaoAdicionarParcela() {
+public void acaoAdicionarParcela() {
     try {
-      double valor = Double.parseDouble(txtValorParcela.getText().replace(",", "."));
-      LocalDate ven = dtVencimentoParcela.getValue();
+        // CORREÇÃO AQUI
+        double valor = util.Monetario.converterParaDouble(txtValorParcela.getText());
 
-      if (ven == null) { Alerta.mostrarErro("Erro", "Defina a data."); return; }
+        LocalDate ven = dtVencimentoParcela.getValue();
 
-      listaParcelas.add(new ParcelaPagar(contadorParcela++, ven, valor));
-      atualizarTotal();
+        if (ven == null) {
+            Alerta.mostrarErro("Erro", "Defina a data.");
+            return;
+        }
 
-    } catch (NumberFormatException e) { Alerta.mostrarErro("Erro", "Valor inválido"); }
-  }
+        if (valor <= 0) {
+             Alerta.mostrarErro("Erro", "O valor deve ser maior que zero.");
+             return;
+        }
+
+        listaParcelas.add(new ParcelaPagar(contadorParcela++, ven, valor));
+        atualizarTotal();
+
+    } catch (NumberFormatException e) {
+        Alerta.mostrarErro("Erro", "Valor inválido. Ex: 500,00");
+    }
+}
 
   @FXML
   public void acaoRemoverParcela() {

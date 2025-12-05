@@ -10,26 +10,27 @@ public class ServicoController {
   @FXML private TextField txtNome, txtValor;
 
   @FXML
-  public void acaoSalvar() {
+public void acaoSalvar() {
     try {
-      String nome = txtNome.getText();
-      if (nome.isEmpty()) {
-          Alerta.mostrarErro("Erro", "Digite o nome do serviço.");
-          return;
-      }
+        String nome = txtNome.getText();
+        if (nome.isEmpty()) {
+            Alerta.mostrarErro("Erro", "Digite o nome do serviço.");
+            return;
+        }
 
-      double valor = Double.parseDouble(txtValor.getText().replace(",", "."));
+        // CORREÇÃO AQUI: Usa a classe Monetario
+        double valor = util.Monetario.converterParaDouble(txtValor.getText());
 
-      Servico s = new Servico(nome, valor);
-      if (new ServicoDAO().salvar(s)) {
-        Alerta.mostrarSucesso("Sucesso", "Serviço registado!");
-        txtNome.clear();
-        txtValor.clear();
-      } else {
-        Alerta.mostrarErro("Erro", "Erro ao salvar no banco.");
-      }
+        Servico s = new Servico(nome, valor);
+        if (new ServicoDAO().salvar(s)) {
+            Alerta.mostrarSucesso("Sucesso", "Serviço registrado!");
+            txtNome.clear();
+            txtValor.clear();
+        } else {
+            Alerta.mostrarErro("Erro", "Erro ao salvar no banco.");
+        }
     } catch (NumberFormatException e) {
-      Alerta.mostrarErro("Erro", "Valor inválido! Digite apenas números (ex: 150.00)");
+        Alerta.mostrarErro("Erro", "Valor inválido! Use formato: 1200,00");
     }
-  }
+}
 }

@@ -5,6 +5,7 @@ import javafx.scene.control.*;
 import model.Fornecedor;
 import model.dao.FornecedorDAO;
 import util.Alerta;
+import util.Documento; // Importando a nova classe
 
 public class FornecedorController {
 
@@ -41,10 +42,13 @@ public class FornecedorController {
         return;
     }
 
-    String documento = rbPF.isSelected() ? txtCpf.getText() : txtCnpj.getText();
+    String documentoBruto = rbPF.isSelected() ? txtCpf.getText() : txtCnpj.getText();
     String tipo = rbPF.isSelected() ? "PF" : "PJ";
 
-    Fornecedor f = new Fornecedor(tipo, nome, documento, txtNicho.getText(),
+    // --- CORREÇÃO: Limpa o documento ---
+    String documentoLimpo = Documento.limpar(documentoBruto);
+
+    Fornecedor f = new Fornecedor(tipo, nome, documentoLimpo, txtNicho.getText(),
                                   txtTelefone.getText(), txtEmail.getText(), txtEndereco.getText());
 
     FornecedorDAO dao = new FornecedorDAO();

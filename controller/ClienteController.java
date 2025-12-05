@@ -7,6 +7,8 @@ import model.Base;
 import model.Cliente;
 import model.dao.BaseDAO;
 import model.dao.ClienteDAO;
+import util.Alerta;
+import util.Documento; // Importando a nova classe
 import java.util.List;
 
 public class ClienteController {
@@ -70,42 +72,63 @@ public class ClienteController {
 
   @FXML
   public void acaoSalvar() {
-    // 1. Captura os dados da tela
-    String nome = txtNome.getText();
-    String telefone = txtTelefone.getText();
-    String email = txtEmail.getText();
-    String endereco = txtEndereco.getText();
-    String gestor = txtGestor.getText(); // Captura o gestor
+    try {
+        // 1. Validação Básica
+        if (txtNome.getText().isEmpty()) {
+            Alerta.mostrarErro("Erro", "O Nome/Razão Social é obrigatório.");
+            return;
+        }
+        if (cbBase.getValue() == null) {
+            Alerta.mostrarErro("Erro", "Selecione uma base de atendimento!");
+            return;
+        }
 
-    Base baseSelecionada = cbBase.getValue();
-    if (baseSelecionada == null) {
-      System.out.println("Aviso: Selecione uma base de atendimento!");
-      return;
-    }
-    int idBase = baseSelecionada.getId();
+        // 2. Captura e Limpeza de Dados
+        String nome = txtNome.getText();
+        String telefone = txtTelefone.getText();
+        String email = txtEmail.getText();
+        String endereco = txtEndereco.getText();
+        String gestor = txtGestor.getText();
+        int idBase = cbBase.getValue().getId();
 
-    String tipo;
-    String documento;
+        String tipo;
+        String documentoBruto;
 
-    if (rbPF.isSelected()) {
-      tipo = "PF";
-      documento = txtCpf.getText();
-    } else {
-      tipo = "PJ";
-      documento = txtCnpj.getText();
-    }
+        if (rbPF.isSelected()) {
+            tipo = "PF";
+            documentoBruto = txtCpf.getText();
+        } else {
+            tipo = "PJ";
+            documentoBruto = txtCnpj.getText();
+        }
 
-    // 2. Cria o objeto Cliente (AGORA as variáveis já existem)
-    Cliente cliente = new Cliente(tipo, nome, documento, gestor, telefone, email, endereco, idBase);
+        // --- CORREÇÃO: Limpa o documento aqui ---
+        String documentoLimpo = Documento.limpar(documentoBruto);
 
-    // 3. Salva no banco
-    ClienteDAO dao = new ClienteDAO();
+        // Opcional: Validar tamanho
+        if ("PF".equals(tipo) && documentoLimpo.length() != 11) {
+             Alerta.mostrarErro("Erro", "CPF inválido (deve conter 11 dígitos).");
+             return;
+        }
+        if ("PJ".equals(tipo) && documentoLimpo.length() != 14) {
+             Alerta.mostrarErro("Erro", "CNPJ inválido (deve conter 14 dígitos).");
+             return;
+        }
 
-    if (dao.salvar(cliente)) {
-      System.out.println("SUCESSO: Cliente cadastrado com sucesso!");
-      limparCampos();
-    } else {
-      System.out.println("ERRO: Falha ao cadastrar cliente.");
+        // 3. Cria o objeto e Salva
+        Cliente cliente = new Cliente(tipo, nome, documentoLimpo, gestor, telefone, email, endereco, idBase);
+        ClienteDAO dao = new ClienteDAO();
+
+        if (dao.salvar(cliente)) {
+            Alerta.mostrarSucesso("Sucesso", "Cliente cadastrado com sucesso!");
+            limparCampos();
+        } else {
+            Alerta.mostrarErro("Erro", "Falha ao cadastrar cliente (Verifique se o CPF/CNPJ já existe).");
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        Alerta.mostrarErro("Erro Crítico", e.getMessage());
     }
   }
 

@@ -5,9 +5,8 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.StringConverter; // Import necessário
+import javafx.util.StringConverter;
 import model.Cliente;
-import model.PessoaJuridica; // Import necessário
 import model.LoteCobranca;
 import model.OrdemServico;
 import model.dao.ClienteDAO;
@@ -29,6 +28,7 @@ public class ContasReceberController {
     @FXML private TableView<OrdemServico> tabelaOs;
     @FXML private TableColumn<OrdemServico, Integer> colIdOs;
     @FXML private TableColumn<OrdemServico, Double> colValorOs;
+    @FXML private TableColumn<OrdemServico, String> colDataOs; // Adicionado para evitar erro no FXML se existir
 
     private ObservableList<OrdemServico> selecionadas = FXCollections.observableArrayList();
 
@@ -36,22 +36,25 @@ public class ContasReceberController {
     public void initialize() {
         dtEmissao.setValue(LocalDate.now());
 
-        carregarClientesPJ(); // Lógica separada para filtrar PJ
-        configurarComboOS();  // Lógica separada para formatar visualização
+        carregarClientesPJ();
+        configurarComboOS();
 
         cbStatus.setItems(FXCollections.observableArrayList("PENDENTE", "PAGO"));
 
         colIdOs.setCellValueFactory(new PropertyValueFactory<>("id"));
         colValorOs.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
+        // Se houver coluna de data no FXML, descomente:
+        // colDataOs.setCellValueFactory(new PropertyValueFactory<>("dataEmissao"));
+
         tabelaOs.setItems(selecionadas);
     }
 
     private void carregarClientesPJ() {
         List<Cliente> todos = new ClienteDAO().listar();
 
-        // FILTRO: Apenas Pessoa Jurídica
+        // CORREÇÃO: Filtra verificando se a String tipo é "PJ"
         List<Cliente> apenasPJ = todos.stream()
-            .filter(c -> c instanceof PessoaJuridica)
+            .filter(c -> "PJ".equals(c.getTipo()))
             .collect(Collectors.toList());
 
         cbCliente.setItems(FXCollections.observableArrayList(apenasPJ));
@@ -61,17 +64,17 @@ public class ContasReceberController {
         List<OrdemServico> pendentes = new OrdemServicoDAO().listarPendentes();
         cbOsDisponiveis.setItems(FXCollections.observableArrayList(pendentes));
 
-        // FORMATAÇÃO: Mostra "OS Nº X - R$ Y" em vez do caminho da memória
+        // Formatação visual do ComboBox
         cbOsDisponiveis.setConverter(new StringConverter<OrdemServico>() {
             @Override
             public String toString(OrdemServico os) {
                 if (os == null) return null;
-                return String.format("OS Nº %d - Total: R$ %.2f", os.getId(), os.getValorTotal());
+                return String.format("OS Nº %d - R$ %.2f", os.getId(), os.getValorTotal());
             }
 
             @Override
             public OrdemServico fromString(String string) {
-                return null; // Não necessário para ComboBox de seleção
+                return null;
             }
         });
     }
@@ -124,8 +127,7 @@ public class ContasReceberController {
             Alerta.mostrarSucesso("Sucesso", "Fatura Gerada!");
             selecionadas.clear();
             atualizarTotal();
-            // Recarrega pendentes atualizados
-            configurarComboOS();
+            configurarComboOS(); // Recarrega para remover as usadas
         }
     }
 }

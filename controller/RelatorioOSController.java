@@ -11,6 +11,7 @@ import model.dao.BaseDAO;
 import model.dao.ClienteDAO;
 import model.dao.FuncionarioDAO;
 import model.dao.RelatorioDAO;
+import java.time.LocalDate; // Import necessário
 import java.util.List;
 
 public class RelatorioOSController {
@@ -32,7 +33,7 @@ public class RelatorioOSController {
     cbCliente.setItems(FXCollections.observableArrayList(new ClienteDAO().listar()));
     cbMotorista.setItems(FXCollections.observableArrayList(new FuncionarioDAO().listarPorFuncao("Motorista")));
 
-    // Configura Colunas
+    // Configura Colunas (Lê o array de String retornado pelo DAO)
     colId.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[0]));
     colData.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[1]));
     colCliente.setCellValueFactory(data -> new SimpleStringProperty(data.getValue()[2]));
@@ -45,15 +46,25 @@ public class RelatorioOSController {
   public void acaoPesquisar() {
     RelatorioDAO dao = new RelatorioDAO();
 
-    // Passa nomes para filtro (ou ids se mudar o DAO)
+    // Obtém os valores dos campos
     String base = (cbBase.getValue() != null) ? cbBase.getValue().getRazaoSocial() : null;
     String cliente = (cbCliente.getValue() != null) ? cbCliente.getValue().getNome() : null;
 
-    List<String[]> dados = dao.buscarOS(base, cliente);
+    // CORREÇÃO: Pegando as datas do formulário
+    LocalDate inicio = dtInicio.getValue();
+    LocalDate fim = dtFim.getValue();
+
+    // Passa os 4 argumentos para o DAO (Base, Cliente, Inicio, Fim)
+    List<String[]> dados = dao.buscarOS(base, cliente, inicio, fim);
+
     tabelaResultados.setItems(FXCollections.observableArrayList(dados));
 
     // Calcular total na tela
-    double total = dados.stream().mapToDouble(s -> Double.parseDouble(s[5])).sum();
+    double total = 0.0;
+    try {
+        total = dados.stream().mapToDouble(s -> Double.parseDouble(s[5])).sum();
+    } catch (Exception e) { total = 0.0; }
+
     lblTotalGeral.setText(String.format("R$ %.2f", total));
   }
 
@@ -62,6 +73,8 @@ public class RelatorioOSController {
       cbBase.getSelectionModel().clearSelection();
       cbCliente.getSelectionModel().clearSelection();
       cbMotorista.getSelectionModel().clearSelection();
+      dtInicio.setValue(null); // Limpa data
+      dtFim.setValue(null);    // Limpa data
       lblTotalGeral.setText("R$ 0,00");
   }
 }
