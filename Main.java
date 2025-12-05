@@ -36,7 +36,7 @@ public class Main extends Application {
             Scene scene = new Scene(root);
 
             // 4. Configura o Palco (Janela)
-            primaryStage.setTitle("Sistema Tow Hub - Login");
+            //primaryStage.setTitle("Sistema Tow Hub - Login");
             primaryStage.setScene(scene);
             primaryStage.setResizable(false); // Login geralmente é fixo
             primaryStage.centerOnScreen();
