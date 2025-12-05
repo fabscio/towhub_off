@@ -49,7 +49,7 @@ public class LoginController {
 
             // Abre o Menu
             Stage palcoMenu = new Stage();
-            palcoMenu.setScene(new Scene(root, 1280, 720));
+            palcoMenu.setScene(new Scene(root));
             palcoMenu.setTitle("Sistema Tow Hub");
             palcoMenu.setResizable(false);
             palcoMenu.show();

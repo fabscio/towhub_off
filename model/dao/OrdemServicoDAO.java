@@ -4,6 +4,9 @@ import database.ConexaoFactory;
 import model.OrdemServico;
 import model.ItemOrdemServico;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class OrdemServicoDAO {
 
@@ -131,5 +134,30 @@ public class OrdemServicoDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    // Adicionar este método dentro da classe OrdemServicoDAO existente
+
+    // Busca OS que ainda não foram faturadas (id_lote IS NULL)
+    public ArrayList<OrdemServico> listarPendentes() {
+        ArrayList<OrdemServico> lista = new ArrayList<>();
+        String sql = "SELECT * FROM ordem_servico WHERE id_lote IS NULL ORDER BY data_emissao";
+
+        try (Connection conn = ConexaoFactory.getConexao();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                OrdemServico os = new OrdemServico();
+                os.setId(rs.getInt("id"));
+                os.setDataEmissao(rs.getDate("data_emissao").toLocalDate());
+                os.setValorTotal(rs.getDouble("valor_total"));
+                // ... preencher outros campos relevantes para exibição
+                lista.add(os);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
     }
 }

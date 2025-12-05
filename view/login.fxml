@@ -6,8 +6,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="1000.0"
-            prefHeight="550.0" prefWidth="400.0" style="-fx-background-color: #f0f2f5;"
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="550.0" minWidth="400.0"
+            prefHeight="550.0" prefWidth="400.0"
+            style="-fx-background-color: #f0f2f5;"
             xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controller.LoginController">
 
@@ -29,7 +31,7 @@
           <VBox.margin> <Insets bottom="20.0" top="10.0" /> </VBox.margin>
         </VBox>
 
-        <VBox alignment="CENTER_LEFT" maxWidth="200.0" prefWidth="657.0" spacing="5.0">
+        <VBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="5.0">
           <children>
             <Label text="CPF do Usuário" textFill="#34495e">
               <font> <Font name="System Bold" size="12.0" /> </font>
@@ -43,7 +45,7 @@
           </children>
         </VBox>
 
-        <VBox alignment="CENTER_LEFT" maxWidth="200.0" spacing="5.0">
+        <VBox alignment="CENTER_LEFT" maxWidth="Infinity" spacing="5.0">
           <children>
             <Label text="Senha" textFill="#34495e">
               <font> <Font name="System Bold" size="12.0" /> </font>
@@ -55,7 +57,7 @@
           <VBox.margin> <Insets top="5.0" /> </VBox.margin>
         </VBox>
 
-        <Button fx:id="btnEntrar" defaultButton="true" maxWidth="150.0" mnemonicParsing="false"
+        <Button fx:id="btnEntrar" defaultButton="true" maxWidth="Infinity" mnemonicParsing="false"
                 onAction="#acaoEntrar"
                 style="-fx-background-color: #2980b9; -fx-text-fill: white; -fx-background-radius: 5; -fx-cursor: hand;"
                 text="ENTRAR">

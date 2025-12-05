@@ -15,6 +15,14 @@ public class ContaPagar {
     this.valorTotal += p.getValor();
   }
 
+  // Remove e Subtrai (NOVO)
+  public void removerParcela(ParcelaPagar p) {
+      if(this.parcelas.remove(p)) {
+          this.valorTotal -= p.getValor();
+          if (this.valorTotal < 0) this.valorTotal = 0;
+      }
+  }
+
   public int getIdFornecedor() { return idFornecedor; }
   public void setIdFornecedor(int id) { this.idFornecedor = id; }
   public int getIdBase() { return idBase; }
